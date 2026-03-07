@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quest Board - Assignment Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS RESET & VARIABLES ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #1e2a45;
+  --bg-card-hover: #253352;
+  --text-primary: #f5f0e1;
+  --text-secondary: #b8b0a0;
+  --text-muted: #7a7468;
+  --gold: #FFD700;
+  --gold-dark: #b8960f;
+  --gold-glow: rgba(255, 215, 0, 0.3);
+  --amber: #FFBF00;
+  --cream: #f5f0e1;
+  --red: #e74c3c;
+  --red-dark: #922;
+  --green: #2ecc71;
+  --blue: #3498db;
+  --purple: #9b59b6;
+  --border: rgba(255, 215, 0, 0.15);
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --radius: 12px;
+  --transition: 0.3s ease;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f5f0e1;
+  --bg-secondary: #ebe4d2;
+  --bg-card: #fff;
+  --bg-card-hover: #f9f4e8;
+  --text-primary: #2c2416;
+  --text-secondary: #5a5040;
+  --text-muted: #8a8070;
+  --border: rgba(180, 150, 80, 0.25);
+  --shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+}
+
+h1, h2, h3, h4 { font-family: 'Cinzel', serif; }
+
+button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+
+/* ===== STICKY HEADER ===== */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+  border-bottom: 2px solid var(--border);
+  padding: 12px 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+.header-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.header-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem; font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 20px var(--gold-glow);
+  letter-spacing: 2px;
+}
+.header-stats {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+}
+
+/* Coin display */
+.coin-display {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,191,0,0.08));
+  border: 1px solid var(--gold-dark);
+  border-radius: 30px; padding: 6px 16px;
+  font-weight: 800; font-size: 1.1rem; color: var(--gold);
+  position: relative; overflow: visible;
+}
+.coin-icon {
+  width: 28px; height: 28px;
+  background: radial-gradient(circle at 35% 35%, #ffe066, #FFD700, #b8960f);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: #7a5c00;
+  box-shadow: 0 0 10px var(--gold-glow);
+  animation: coinSpin 3s linear infinite;
+}
+@keyframes coinSpin {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+
+/* Streak */
+.streak-display {
+  display: flex; align-items: center; gap: 5px;
+  color: #ff6b35; font-weight: 700; font-size: 0.95rem;
+}
+
+/* XP Bar */
+.xp-container {
+  display: flex; align-items: center; gap: 8px; min-width: 180px;
+}
+.xp-bar-outer {
+  flex: 1; height: 14px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 7px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.xp-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--amber));
+  border-radius: 7px;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.xp-label {
+  font-size: 0.75rem; font-weight: 700; color: var(--gold);
+  white-space: nowrap;
+}
+.level-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem; color: var(--amber);
+  font-weight: 700; white-space: nowrap;
+}
+
+/* Header controls */
+.header-controls {
+  display: flex; align-items: center; gap: 8px;
+}
+.icon-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,215,0,0.1);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+  font-size: 1.1rem;
+  transition: all var(--transition);
+}
+.icon-btn:hover {
+  background: rgba(255,215,0,0.25);
+  transform: scale(1.1);
+}
+
+/* ===== MAIN CONTAINER ===== */
+.container {
+  max-width: 1100px; margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  align-items: center; margin-bottom: 20px;
+}
+.view-tabs {
+  display: flex; gap: 4px;
+  background: var(--bg-secondary);
+  border-radius: 10px; padding: 4px;
+  border: 1px solid var(--border);
+}
+.view-tab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600; font-size: 0.85rem;
+  transition: all var(--transition);
+}
+.view-tab.active {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #1a1a2e;
+  box-shadow: 0 2px 10px var(--gold-glow);
+}
+.view-tab:hover:not(.active) { color: var(--gold); }
+
+.sort-select {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+}
+
+.search-box {
+  flex: 1; min-width: 180px;
+  padding: 8px 14px 8px 36px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  transition: border var(--transition);
+}
+.search-box:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.search-wrapper {
+  position: relative; flex: 1; min-width: 180px;
+}
+.search-wrapper::before {
+  content: '\u{1F50D}';
+  position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem; opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ===== SECTIONS / ACCORDION ===== */
+.section {
+  margin-bottom: 16px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: all var(--transition);
+}
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition);
+}
+.section-header:hover { background: var(--bg-card-hover); }
+
+.section-color {
+  width: 14px; height: 14px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.section-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 700; font-size: 1.05rem;
+  flex: 1;
+}
+.section-badge {
+  background: rgba(255,215,0,0.15);
+  color: var(--gold);
+  font-size: 0.75rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+}
+.section-progress {
+  width: 80px; height: 8px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 4px; overflow: hidden;
+}
+.section-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), #27ae60);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.section-chevron {
+  font-size: 0.9rem; color: var(--text-muted);
+  transition: transform var(--transition);
+}
+.section.collapsed .section-chevron { transform: rotate(-90deg); }
+.section-body { padding: 0 18px 14px; }
+.section.collapsed .section-body { display: none; }
+
+.section-actions {
+  display: flex; gap: 8px; margin-bottom: 10px;
+}
+.btn-complete-all {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, var(--green), #27ae60);
+  color: #fff; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 700;
+  transition: all var(--transition);
+}
+.btn-complete-all:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(46,204,113,0.3); }
+
+/* ===== ASSIGNMENT CARD ===== */
+.assignment {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid transparent;
+  transition: all var(--transition);
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.assignment:hover {
+  border-color: var(--border);
+  background: var(--bg-card-hover);
+}
+.assignment.completed-card {
+  opacity: 0.55;
+}
+.assignment.completed-card .assignment-title {
+  text-decoration: line-through;
+}
+.assignment.overdue {
+  border-color: var(--red);
+  background: rgba(231, 76, 60, 0.08);
+}
+
+/* Custom checkbox */
+.checkbox-wrapper {
+  position: relative; flex-shrink: 0;
+  width: 28px; height: 28px; margin-top: 2px;
+}
+.checkbox-wrapper input {
+  position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2;
+}
+.checkbox-visual {
+  width: 28px; height: 28px;
+  border: 2px solid var(--gold-dark);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  font-size: 16px;
+}
+.checkbox-wrapper input:checked + .checkbox-visual {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border-color: var(--gold);
+  animation: checkBounce 0.4s ease;
+}
+@keyframes checkBounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.checkbox-wrapper input:checked + .checkbox-visual::after {
+  content: '\2714'; color: #1a1a2e; font-weight: 900;
+}
+
+.assignment-content { flex: 1; min-width: 0; }
+.assignment-title {
+  font-weight: 700; font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+.assignment-meta {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  font-size: 0.78rem; color: var(--text-muted);
+}
+.assignment-meta span { display: flex; align-items: center; gap: 3px; }
+
+.priority-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%; display: inline-block;
+}
+.priority-low { background: var(--green); }
+.priority-med { background: var(--amber); }
+.priority-high { background: var(--red); }
+
+.badge {
+  font-size: 0.7rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 12px;
+}
+.badge-repeat {
+  background: rgba(155, 89, 182, 0.2);
+  color: var(--purple);
+}
+.badge-overdue {
+  background: rgba(231, 76, 60, 0.2);
+  color: var(--red);
+}
+.badge-early {
+  background: rgba(46, 204, 113, 0.2);
+  color: var(--green);
+}
+
+.assignment-actions {
+  display: flex; gap: 4px; flex-shrink: 0;
+}
+.assignment-actions button {
+  width: 28px; height: 28px;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.assignment-actions button:hover {
+  background: rgba(255,215,0,0.1);
+  color: var(--gold);
+}
+.delete-btn:hover { color: var(--red) !important; background: rgba(231,76,60,0.1) !important; }
+
+/* ===== FAB ===== */
+.fab {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; color: #1a1a2e; font-weight: 900;
+  box-shadow: 0 4px 24px var(--gold-glow), 0 0 40px rgba(255,215,0,0.15);
+  z-index: 90;
+  transition: all var(--transition);
+  animation: fabGlow 2s ease-in-out infinite alternate;
+}
+@keyframes fabGlow {
+  from { box-shadow: 0 4px 24px var(--gold-glow); }
+  to { box-shadow: 0 4px 40px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.2); }
+}
+.fab:hover { transform: scale(1.1) rotate(90deg); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  transform: translateY(20px);
+  transition: transform var(--transition);
+}
+.modal-overlay.active .modal { transform: translateY(0); }
+
+.modal h2 {
+  color: var(--gold); margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+.modal label {
+  display: block; font-weight: 700;
+  font-size: 0.85rem; color: var(--text-secondary);
+  margin-bottom: 6px; margin-top: 14px;
+}
+.modal input[type="text"],
+.modal input[type="date"],
+.modal textarea,
+.modal select {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  transition: border var(--transition);
+}
+.modal input:focus, .modal textarea:focus, .modal select:focus {
+  outline: none; border-color: var(--gold);
+}
+.modal textarea { resize: vertical; min-height: 60px; }
+
+.type-toggle {
+  display: flex; gap: 4px;
+  background: var(--bg-secondary);
+  border-radius: 8px; padding: 4px;
+  border: 1px solid var(--border);
+}
+.type-toggle button {
+  flex: 1; padding: 8px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600; font-size: 0.85rem;
+  transition: all var(--transition);
+}
+.type-toggle button.active {
+  background: var(--gold);
+  color: #1a1a2e;
+}
+
+.days-picker {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.day-btn {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-weight: 700; font-size: 0.8rem;
+  transition: all var(--transition);
+}
+.day-btn.active {
+  background: var(--gold);
+  color: #1a1a2e;
+  border-color: var(--gold);
+}
+
+.color-palette {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.color-swatch {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.color-swatch.active, .color-swatch:hover {
+  border-color: var(--text-primary);
+  transform: scale(1.15);
+}
+
+.modal-actions {
+  display: flex; gap: 10px; margin-top: 24px;
+}
+.btn-save {
+  flex: 1; padding: 12px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #1a1a2e;
+  font-weight: 800; font-size: 0.95rem;
+  border-radius: 10px;
+  transition: all var(--transition);
+}
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--gold-glow); }
+.btn-cancel {
+  padding: 12px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all var(--transition);
+}
+.btn-cancel:hover { border-color: var(--red); color: var(--red); }
+
+.inline-new-section {
+  display: flex; gap: 6px; margin-top: 6px;
+}
+.inline-new-section input {
+  flex: 1;
+}
+.inline-new-section button {
+  padding: 8px 14px;
+  background: var(--gold);
+  color: #1a1a2e;
+  font-weight: 700;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* ===== SETTINGS PANEL ===== */
+.settings-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
+}
+.settings-overlay.active { opacity: 1; pointer-events: all; }
+
+.settings-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.settings-panel h2 {
+  color: var(--gold); margin-bottom: 20px;
+}
+.settings-btn {
+  display: block; width: 100%;
+  padding: 12px 16px; margin-bottom: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-weight: 600; font-size: 0.9rem;
+  text-align: left;
+  transition: all var(--transition);
+}
+.settings-btn:hover {
+  border-color: var(--gold);
+  background: var(--bg-card-hover);
+}
+.settings-btn.danger { color: var(--red); }
+.settings-btn.danger:hover { border-color: var(--red); }
+
+/* ===== COIN BURST ANIMATION ===== */
+.coin-particle {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: radial-gradient(circle, #ffe066, #FFD700, #b8960f);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 300;
+  animation: coinBurst 0.8s ease-out forwards;
+}
+@keyframes coinBurst {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
+}
+
+/* ===== LEVEL UP FLASH ===== */
+.level-up-flash {
+  position: fixed; inset: 0;
+  background: radial-gradient(circle, rgba(255,215,0,0.3), transparent);
+  z-index: 250;
+  pointer-events: none;
+  animation: levelFlash 1s ease-out forwards;
+}
+@keyframes levelFlash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ===== CONFETTI ===== */
+.confetti-container {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 300;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 10px; height: 10px;
+  top: -10px;
+  animation: confettiFall 3s ease-in forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 1rem; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 700px) {
+  .header-inner { flex-direction: column; align-items: stretch; }
+  .header-stats { flex-direction: column; gap: 8px; }
+  .xp-container { min-width: unset; }
+  .toolbar { flex-direction: column; }
+  .view-tabs { overflow-x: auto; }
+  .container { padding: 12px; }
+  .modal { padding: 20px; }
+  .fab { width: 52px; height: 52px; font-size: 1.6rem; bottom: 20px; right: 20px; }
+}
+
+/* ===== UTILITY ===== */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-title">Quest Board</div>
+    <div class="header-stats">
+      <div class="coin-display" id="coinDisplay">
+        <div class="coin-icon">$</div>
+        <span id="coinCount">0</span>
+      </div>
+      <div class="streak-display" id="streakDisplay" title="Day streak">
+        <span>&#x1F525;</span><span id="streakCount">0</span> day streak
+      </div>
+      <div class="xp-container">
+        <span class="level-title" id="levelTitle">Apprentice</span>
+        <div class="xp-bar-outer">
+          <div class="xp-bar-inner" id="xpBar" style="width:0%"></div>
+        </div>
+        <span class="xp-label" id="xpLabel">Lv 1</span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="icon-btn" id="themeToggle" title="Toggle theme">&#x263E;</button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">&#x2699;</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== TOOLBAR ===== -->
+<div class="container">
+  <div class="toolbar">
+    <div class="view-tabs" id="viewTabs">
+      <button class="view-tab active" data-view="today">Today</button>
+      <button class="view-tab" data-view="week">This Week</button>
+      <button class="view-tab" data-view="upcoming">All Upcoming</button>
+      <button class="view-tab" data-view="completed">Completed</button>
+    </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="dueDate">Sort: Due Date</option>
+      <option value="class">Sort: Class</option>
+      <option value="priority">Sort: Priority</option>
+    </select>
+    <div class="search-wrapper">
+      <input type="text" class="search-box" id="searchBox" placeholder="Search assignments...">
+    </div>
+  </div>
+
+  <!-- ===== SECTIONS CONTAINER ===== -->
+  <div id="sectionsContainer"></div>
+</div>
+
+<!-- ===== FAB ===== -->
+<button class="fab" id="addFab" title="Add Assignment">+</button>
+
+<!-- ===== ADD/EDIT MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">New Quest</h2>
+    <label>Title *</label>
+    <input type="text" id="inputTitle" placeholder="e.g., Read Chapter 5">
+
+    <label>Class Section *</label>
+    <select id="inputSection"></select>
+    <div class="inline-new-section" id="newSectionRow">
+      <input type="text" id="inputNewSection" placeholder="New section name...">
+      <div style="display:flex;gap:4px">
+        <div class="color-palette" id="newSectionPalette"></div>
+      </div>
+      <button id="addSectionBtn">Add</button>
+    </div>
+
+    <label>Type</label>
+    <div class="type-toggle">
+      <button id="typeOneTime" class="active" data-type="onetime">One-time</button>
+      <button id="typeRepeating" data-type="repeating">Repeating</button>
+    </div>
+
+    <div id="dueDateGroup">
+      <label>Due Date</label>
+      <input type="date" id="inputDueDate">
+    </div>
+
+    <div id="daysGroup" class="hidden">
+      <label>Repeat On</label>
+      <div class="days-picker" id="daysPicker"></div>
+    </div>
+
+    <label>Priority</label>
+    <select id="inputPriority">
+      <option value="low">Low</option>
+      <option value="med" selected>Medium</option>
+      <option value="high">High</option>
+    </select>
+
+    <label>Notes</label>
+    <textarea id="inputNotes" placeholder="Optional notes..."></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-save" id="saveBtn">Save Quest</button>
+      <button class="btn-cancel" id="cancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS OVERLAY ===== -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <h2>Settings</h2>
+    <button class="settings-btn" id="exportBtn">&#x1F4E6; Export Assignments as JSON</button>
+    <button class="settings-btn danger" id="resetCoinsBtn">&#x1FA99; Reset Coins &amp; Level</button>
+    <button class="settings-btn danger" id="resetAllBtn">&#x1F5D1; Reset All Data</button>
+    <button class="settings-btn" id="closeSettingsBtn">Close</button>
+  </div>
+</div>
+
+<script>
+/* =======================================================================
+   QUEST BOARD - Gamified Assignment Dashboard
+   Pure vanilla JS, localStorage persistence, no dependencies
+   ======================================================================= */
+
+// ===== CONSTANTS =====
+const COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e84393','#636e72'];
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAY_SHORTS = ['S','M','T','W','T','F','S'];
+
+const LEVELS = [
+  { title: 'Apprentice', minCoins: 0 },
+  { title: 'Scholar',    minCoins: 100 },
+  { title: 'Sage',       minCoins: 300 },
+  { title: 'Archmage',   minCoins: 700 },
+];
+const XP_PER_LEVEL = 100; // XP within a level bracket before visual bar fills
+
+// ===== DEFAULT STATE =====
+function defaultState() {
+  return {
+    coins: 0,
+    streak: 0,
+    lastCompletionDate: null,
+    theme: 'dark',
+    sections: [],      // { id, name, color, collapsed }
+    assignments: [],   // { id, title, sectionId, type, dueDate, days, priority, notes, completed, completedDate }
+    editingId: null,
+  };
+}
+
+// ===== STATE MANAGEMENT =====
+let appState = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('questBoardState');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...defaultState(), ...parsed };
+    }
+  } catch (e) { /* ignore */ }
+  return defaultState();
+}
+
+function saveState() {
+  localStorage.setItem('questBoardState', JSON.stringify(appState));
+}
+
+// ===== DATE HELPERS =====
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function startOfWeek(d) {
+  const dt = new Date(d);
+  dt.setDate(dt.getDate() - dt.getDay());
+  return dt.toISOString().slice(0, 10);
+}
+
+function endOfWeek(d) {
+  const dt = new Date(d);
+  dt.setDate(dt.getDate() + (6 - dt.getDay()));
+  return dt.toISOString().slice(0, 10);
+}
+
+function daysBetween(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+/** Get next occurrence of a repeating assignment's days from today */
+function nextOccurrence(days) {
+  if (!days || days.length === 0) return null;
+  const today = new Date();
+  const todayDay = today.getDay();
+  for (let i = 0; i < 7; i++) {
+    const check = (todayDay + i) % 7;
+    if (days.includes(check)) {
+      const d = new Date(today);
+      d.setDate(d.getDate() + i);
+      return d.toISOString().slice(0, 10);
+    }
+  }
+  return null;
+}
+
+/** Get effective due date for sorting/filtering */
+function effectiveDue(a) {
+  if (a.type === 'repeating') return nextOccurrence(a.days) || todayStr();
+  return a.dueDate || '9999-12-31';
+}
+
+/** Check if a repeating assignment is due today */
+function isRepeatingDueToday(a) {
+  if (a.type !== 'repeating') return false;
+  const today = new Date().getDay();
+  return a.days && a.days.includes(today);
+}
+
+/** Check if a repeating assignment was completed today already */
+function isRepeatingCompletedToday(a) {
+  return a.type === 'repeating' && a.completedDate === todayStr();
+}
+
+/** Is assignment effectively completed? */
+function isCompleted(a) {
+  if (a.type === 'onetime') return a.completed;
+  return isRepeatingCompletedToday(a);
+}
+
+/** Is assignment overdue? */
+function isOverdue(a) {
+  if (isCompleted(a)) return false;
+  if (a.type === 'repeating') return false; // repeating items recur, not overdue
+  return a.dueDate && a.dueDate < todayStr();
+}
+
+// ===== LEVEL HELPERS =====
+function getLevel(coins) {
+  let lv = LEVELS[0];
+  for (const l of LEVELS) {
+    if (coins >= l.minCoins) lv = l;
+  }
+  return lv;
+}
+
+function getLevelIndex(coins) {
+  let idx = 0;
+  for (let i = 0; i < LEVELS.length; i++) {
+    if (coins >= LEVELS[i].minCoins) idx = i;
+  }
+  return idx;
+}
+
+function getXpProgress(coins) {
+  const idx = getLevelIndex(coins);
+  const current = LEVELS[idx].minCoins;
+  const next = idx < LEVELS.length - 1 ? LEVELS[idx + 1].minCoins : current + XP_PER_LEVEL;
+  const range = next - current;
+  const progress = coins - current;
+  return Math.min(progress / range, 1);
+}
+
+// ===== STREAK LOGIC =====
+function updateStreak() {
+  const today = todayStr();
+  if (appState.lastCompletionDate === today) return; // already updated today
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yStr = yesterday.toISOString().slice(0, 10);
+  if (appState.lastCompletionDate === yStr) {
+    appState.streak += 1;
+  } else if (appState.lastCompletionDate !== today) {
+    appState.streak = 1;
+  }
+  appState.lastCompletionDate = today;
+}
+
+// ===== COIN ANIMATION =====
+function spawnCoinBurst(x, y, count) {
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'coin-particle';
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+    const dist = 40 + Math.random() * 60;
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--ty', Math.sin(angle) * dist - 30 + 'px');
+    p.style.animationDelay = (Math.random() * 0.15) + 's';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+}
+
+// ===== CONFETTI =====
+function launchConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  document.body.appendChild(container);
+  const colors = ['#FFD700','#e74c3c','#3498db','#2ecc71','#9b59b6','#e67e22','#ff6b6b','#f1c40f'];
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.animationDelay = Math.random() * 1.5 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 5000);
+}
+
+// ===== LEVEL UP FLASH =====
+function showLevelUp() {
+  const flash = document.createElement('div');
+  flash.className = 'level-up-flash';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 1100);
+}
+
+// ===== COIN EARNING =====
+function earnCoins(amount, sourceEl) {
+  const oldLevel = getLevelIndex(appState.coins);
+  appState.coins += amount;
+  const newLevel = getLevelIndex(appState.coins);
+
+  // Animation origin
+  let x = window.innerWidth / 2, y = window.innerHeight / 2;
+  if (sourceEl) {
+    const rect = sourceEl.getBoundingClientRect();
+    x = rect.left + rect.width / 2;
+    y = rect.top + rect.height / 2;
+  }
+  spawnCoinBurst(x, y, Math.min(amount, 20));
+
+  if (newLevel > oldLevel) showLevelUp();
+
+  updateStreak();
+  saveState();
+  renderHeader();
+}
+
+// ===== COMPLETE ASSIGNMENT =====
+function completeAssignment(id, checkboxEl) {
+  const a = appState.assignments.find(x => x.id === id);
+  if (!a) return;
+
+  const wasCompleted = isCompleted(a);
+
+  if (a.type === 'onetime') {
+    a.completed = !a.completed;
+    a.completedDate = a.completed ? todayStr() : null;
+  } else {
+    // Repeating: toggle today's completion
+    if (isRepeatingCompletedToday(a)) {
+      a.completedDate = null;
+    } else {
+      a.completedDate = todayStr();
+    }
+  }
+
+  const nowCompleted = isCompleted(a);
+
+  if (!wasCompleted && nowCompleted) {
+    // Calculate coins
+    let coins = a.type === 'repeating' ? 5 : 10;
+
+    // Early bonus (one-time only, completed before due date)
+    if (a.type === 'onetime' && a.dueDate && todayStr() < a.dueDate) {
+      coins += 15;
+    }
+
+    earnCoins(coins, checkboxEl);
+
+    // Check section completion bonus
+    checkSectionBonus(a.sectionId);
+
+    // Check if all today's assignments are done
+    checkAllTodayDone();
+  }
+
+  saveState();
+  render();
+}
+
+/** Award bonus if all assignments in a section due today are completed today */
+function checkSectionBonus(sectionId) {
+  const today = todayStr();
+  const sectionAssignments = appState.assignments.filter(a => a.sectionId === sectionId);
+  const todayAssignments = sectionAssignments.filter(a => {
+    if (a.type === 'onetime') return a.dueDate === today;
+    return isRepeatingDueToday(a);
+  });
+  if (todayAssignments.length > 1 && todayAssignments.every(a => isCompleted(a))) {
+    earnCoins(25, document.getElementById('coinDisplay'));
+  }
+}
+
+/** If all today's assignments are done, fire confetti */
+function checkAllTodayDone() {
+  const todayAssignments = getTodayAssignments();
+  if (todayAssignments.length > 0 && todayAssignments.every(a => isCompleted(a))) {
+    setTimeout(launchConfetti, 300);
+  }
+}
+
+// ===== FILTERING =====
+let currentView = 'today';
+let currentSort = 'dueDate';
+let searchQuery = '';
+
+function getTodayAssignments() {
+  const today = todayStr();
+  return appState.assignments.filter(a => {
+    if (a.type === 'onetime') {
+      if (a.completed) return false;
+      return a.dueDate === today || isOverdue(a);
+    }
+    return isRepeatingDueToday(a);
+  });
+}
+
+function filterAssignments() {
+  const today = todayStr();
+  const weekStart = startOfWeek(today);
+  const weekEnd = endOfWeek(today);
+
+  let list = [...appState.assignments];
+
+  // View filter
+  switch (currentView) {
+    case 'today':
+      list = list.filter(a => {
+        if (a.type === 'onetime') {
+          if (a.completed) return false;
+          return a.dueDate === today || isOverdue(a);
+        }
+        return isRepeatingDueToday(a);
+      });
+      break;
+    case 'week':
+      list = list.filter(a => {
+        if (a.type === 'onetime') {
+          if (a.completed) return false;
+          return a.dueDate >= weekStart && a.dueDate <= weekEnd || isOverdue(a);
+        }
+        return !isRepeatingCompletedToday(a) || true; // show all repeating
+      });
+      break;
+    case 'upcoming':
+      list = list.filter(a => {
+        if (a.type === 'onetime') return !a.completed;
+        return true;
+      });
+      break;
+    case 'completed':
+      list = list.filter(a => isCompleted(a));
+      break;
+  }
+
+  // Search filter
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(a => {
+      const section = appState.sections.find(s => s.id === a.sectionId);
+      return a.title.toLowerCase().includes(q) ||
+             (a.notes && a.notes.toLowerCase().includes(q)) ||
+             (section && section.name.toLowerCase().includes(q));
+    });
+  }
+
+  // Sort
+  const priorityOrder = { high: 0, med: 1, low: 2 };
+  list.sort((a, b) => {
+    switch (currentSort) {
+      case 'dueDate': return effectiveDue(a).localeCompare(effectiveDue(b));
+      case 'class': return (a.sectionId || '').localeCompare(b.sectionId || '');
+      case 'priority': return (priorityOrder[a.priority] || 1) - (priorityOrder[b.priority] || 1);
+      default: return 0;
+    }
+  });
+
+  return list;
+}
+
+// ===== RENDERING =====
+
+/** Render header stats */
+function renderHeader() {
+  document.getElementById('coinCount').textContent = appState.coins;
+  document.getElementById('streakCount').textContent = appState.streak;
+
+  const level = getLevel(appState.coins);
+  const lvIdx = getLevelIndex(appState.coins);
+  document.getElementById('levelTitle').textContent = level.title;
+  document.getElementById('xpLabel').textContent = 'Lv ' + (lvIdx + 1);
+  document.getElementById('xpBar').style.width = (getXpProgress(appState.coins) * 100) + '%';
+
+  // Theme icon
+  document.getElementById('themeToggle').innerHTML = appState.theme === 'dark' ? '&#x263E;' : '&#x2600;';
+}
+
+/** Render the main assignment list grouped by sections */
+function renderSections() {
+  const container = document.getElementById('sectionsContainer');
+  const filtered = filterAssignments();
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">${currentView === 'completed' ? '\u{1F3C6}' : '\u{1F4DC}'}</div>
+      <p>${currentView === 'completed' ? 'No completed quests yet. Get started!' : 'No quests here. Add one with the + button!'}</p>
+    </div>`;
+    return;
+  }
+
+  // Group by section
+  const groups = new Map();
+  for (const a of filtered) {
+    if (!groups.has(a.sectionId)) groups.set(a.sectionId, []);
+    groups.get(a.sectionId).push(a);
+  }
+
+  let html = '';
+  for (const [sectionId, assignments] of groups) {
+    const section = appState.sections.find(s => s.id === sectionId);
+    if (!section) continue;
+
+    const isCollapsed = section.collapsed ? 'collapsed' : '';
+    const total = assignments.length;
+    const done = assignments.filter(a => isCompleted(a)).length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const incomplete = total - done;
+
+    // Check if there are incomplete assignments for "Complete All Today"
+    const hasTodayIncomplete = assignments.some(a => !isCompleted(a) && (
+      (a.type === 'onetime' && a.dueDate === todayStr()) || isRepeatingDueToday(a)
+    ));
+
+    html += `<div class="section ${isCollapsed}" data-section-id="${section.id}">
+      <div class="section-header" onclick="toggleSection('${section.id}')">
+        <div class="section-color" style="background:${section.color}"></div>
+        <div class="section-name">${escHtml(section.name)}</div>
+        ${incomplete > 0 ? `<span class="section-badge">${incomplete} left</span>` : ''}
+        <div class="section-progress">
+          <div class="section-progress-bar" style="width:${pct}%"></div>
+        </div>
+        <span class="section-chevron">\u25BC</span>
+      </div>
+      <div class="section-body">
+        ${hasTodayIncomplete ? `<div class="section-actions">
+          <button class="btn-complete-all" onclick="completeAllSection('${section.id}')">Complete All Today</button>
+        </div>` : ''}
+        ${assignments.map(a => renderAssignment(a)).join('')}
+      </div>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+/** Render a single assignment card */
+function renderAssignment(a) {
+  const completed = isCompleted(a);
+  const overdue = isOverdue(a);
+  const section = appState.sections.find(s => s.id === a.sectionId);
+
+  let dueBadge = '';
+  if (a.type === 'onetime' && a.dueDate) {
+    if (overdue) {
+      dueBadge = `<span class="badge badge-overdue">\u{1F480} Overdue</span>`;
+    } else {
+      const daysLeft = daysBetween(todayStr(), a.dueDate);
+      if (daysLeft === 0) dueBadge = `<span>Due today</span>`;
+      else if (daysLeft === 1) dueBadge = `<span>Due tomorrow</span>`;
+      else dueBadge = `<span>Due ${a.dueDate}</span>`;
+    }
+  } else if (a.type === 'repeating') {
+    const dayLabels = (a.days || []).map(d => DAY_NAMES[d]).join(', ');
+    dueBadge = `<span class="badge badge-repeat">\u{1F501} ${dayLabels}</span>`;
+    const next = nextOccurrence(a.days);
+    if (next && next !== todayStr()) dueBadge += `<span>Next: ${next}</span>`;
+  }
+
+  let earlyBadge = '';
+  if (!completed && a.type === 'onetime' && a.dueDate && todayStr() < a.dueDate) {
+    earlyBadge = `<span class="badge badge-early">+15 early bonus</span>`;
+  }
+
+  const classes = ['assignment'];
+  if (completed) classes.push('completed-card');
+  if (overdue) classes.push('overdue');
+
+  return `<div class="${classes.join(' ')}">
+    <label class="checkbox-wrapper">
+      <input type="checkbox" ${completed ? 'checked' : ''} onchange="completeAssignment('${a.id}', this)">
+      <div class="checkbox-visual"></div>
+    </label>
+    <div class="assignment-content">
+      <div class="assignment-title">${escHtml(a.title)}</div>
+      <div class="assignment-meta">
+        <span><span class="priority-dot priority-${a.priority}"></span> ${a.priority}</span>
+        ${dueBadge}
+        ${earlyBadge}
+        ${a.notes ? `<span title="${escHtml(a.notes)}">\u{1F4DD}</span>` : ''}
+      </div>
+    </div>
+    <div class="assignment-actions">
+      <button onclick="editAssignment('${a.id}')" title="Edit">\u270E</button>
+      <button class="delete-btn" onclick="deleteAssignment('${a.id}')" title="Delete">\u2716</button>
+    </div>
+  </div>`;
+}
+
+/** Master render */
+function render() {
+  renderHeader();
+  renderSections();
+}
+
+// ===== SECTION TOGGLING =====
+function toggleSection(id) {
+  const s = appState.sections.find(x => x.id === id);
+  if (s) { s.collapsed = !s.collapsed; saveState(); render(); }
+}
+
+// ===== COMPLETE ALL IN SECTION =====
+function completeAllSection(sectionId) {
+  const today = todayStr();
+  const targets = appState.assignments.filter(a =>
+    a.sectionId === sectionId && !isCompleted(a) && (
+      (a.type === 'onetime' && (a.dueDate === today || isOverdue(a))) ||
+      isRepeatingDueToday(a)
+    )
+  );
+  for (const a of targets) {
+    if (a.type === 'onetime') { a.completed = true; a.completedDate = today; }
+    else { a.completedDate = today; }
+    const coins = a.type === 'repeating' ? 5 : 10;
+    appState.coins += coins;
+  }
+  if (targets.length > 0) {
+    // Early bonus for qualifying assignments
+    for (const a of targets) {
+      if (a.type === 'onetime' && a.dueDate && today < a.dueDate) appState.coins += 15;
+    }
+    updateStreak();
+    spawnCoinBurst(window.innerWidth / 2, window.innerHeight / 2, 15);
+    // Section bonus
+    if (targets.length > 1) earnCoins(25, document.getElementById('coinDisplay'));
+    checkAllTodayDone();
+  }
+  saveState();
+  render();
+}
+
+// ===== DELETE ASSIGNMENT =====
+function deleteAssignment(id) {
+  if (!confirm('Delete this quest?')) return;
+  appState.assignments = appState.assignments.filter(a => a.id !== id);
+  saveState();
+  render();
+}
+
+// ===== EDIT ASSIGNMENT =====
+function editAssignment(id) {
+  const a = appState.assignments.find(x => x.id === id);
+  if (!a) return;
+  appState.editingId = id;
+  openModal();
+  document.getElementById('inputTitle').value = a.title;
+  document.getElementById('inputSection').value = a.sectionId;
+  document.getElementById('inputPriority').value = a.priority;
+  document.getElementById('inputNotes').value = a.notes || '';
+
+  // Type
+  setAssignmentType(a.type);
+  if (a.type === 'onetime') {
+    document.getElementById('inputDueDate').value = a.dueDate || '';
+  } else {
+    selectedDays = [...(a.days || [])];
+    renderDaysPicker();
+  }
+
+  document.getElementById('modalTitle').textContent = 'Edit Quest';
+  document.getElementById('saveBtn').textContent = 'Update Quest';
+}
+
+// ===== MODAL =====
+let selectedType = 'onetime';
+let selectedDays = [];
+let newSectionColor = COLORS[0];
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('active');
+  populateSectionDropdown();
+  renderNewSectionPalette();
+  renderDaysPicker();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  // Reset form
+  document.getElementById('inputTitle').value = '';
+  document.getElementById('inputDueDate').value = '';
+  document.getElementById('inputNotes').value = '';
+  document.getElementById('inputPriority').value = 'med';
+  selectedDays = [];
+  setAssignmentType('onetime');
+  appState.editingId = null;
+  document.getElementById('modalTitle').textContent = 'New Quest';
+  document.getElementById('saveBtn').textContent = 'Save Quest';
+}
+
+function setAssignmentType(type) {
+  selectedType = type;
+  document.getElementById('typeOneTime').classList.toggle('active', type === 'onetime');
+  document.getElementById('typeRepeating').classList.toggle('active', type === 'repeating');
+  document.getElementById('dueDateGroup').classList.toggle('hidden', type !== 'onetime');
+  document.getElementById('daysGroup').classList.toggle('hidden', type !== 'repeating');
+}
+
+function populateSectionDropdown() {
+  const sel = document.getElementById('inputSection');
+  sel.innerHTML = appState.sections.map(s =>
+    `<option value="${s.id}">${escHtml(s.name)}</option>`
+  ).join('');
+  if (appState.sections.length === 0) {
+    sel.innerHTML = '<option value="">-- Create a section first --</option>';
+  }
+}
+
+function renderNewSectionPalette() {
+  const container = document.getElementById('newSectionPalette');
+  container.innerHTML = COLORS.map(c =>
+    `<div class="color-swatch ${c === newSectionColor ? 'active' : ''}"
+          style="background:${c}" onclick="pickNewSectionColor('${c}')"></div>`
+  ).join('');
+}
+
+function pickNewSectionColor(c) {
+  newSectionColor = c;
+  renderNewSectionPalette();
+}
+
+function renderDaysPicker() {
+  const container = document.getElementById('daysPicker');
+  container.innerHTML = DAY_SHORTS.map((label, i) =>
+    `<button class="day-btn ${selectedDays.includes(i) ? 'active' : ''}"
+             onclick="toggleDay(${i})">${label}</button>`
+  ).join('');
+}
+
+function toggleDay(i) {
+  const idx = selectedDays.indexOf(i);
+  if (idx >= 0) selectedDays.splice(idx, 1);
+  else selectedDays.push(i);
+  renderDaysPicker();
+}
+
+function addSection() {
+  const name = document.getElementById('inputNewSection').value.trim();
+  if (!name) return;
+  const section = {
+    id: 'sec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    name,
+    color: newSectionColor,
+    collapsed: false,
+  };
+  appState.sections.push(section);
+  document.getElementById('inputNewSection').value = '';
+  saveState();
+  populateSectionDropdown();
+  // Select the new section
+  document.getElementById('inputSection').value = section.id;
+}
+
+function saveAssignment() {
+  const title = document.getElementById('inputTitle').value.trim();
+  const sectionId = document.getElementById('inputSection').value;
+  const priority = document.getElementById('inputPriority').value;
+  const notes = document.getElementById('inputNotes').value.trim();
+
+  if (!title) { alert('Please enter a title.'); return; }
+  if (!sectionId) { alert('Please select or create a class section.'); return; }
+
+  const data = {
+    title, sectionId, priority, notes,
+    type: selectedType,
+  };
+
+  if (selectedType === 'onetime') {
+    data.dueDate = document.getElementById('inputDueDate').value || null;
+    data.days = null;
+  } else {
+    data.dueDate = null;
+    data.days = [...selectedDays];
+    if (data.days.length === 0) { alert('Please select at least one day.'); return; }
+  }
+
+  if (appState.editingId) {
+    // Update existing
+    const a = appState.assignments.find(x => x.id === appState.editingId);
+    if (a) Object.assign(a, data);
+  } else {
+    // Create new
+    data.id = 'asgn_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    data.completed = false;
+    data.completedDate = null;
+    appState.assignments.push(data);
+  }
+
+  saveState();
+  closeModal();
+  render();
+}
+
+// ===== THEME =====
+function toggleTheme() {
+  appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', appState.theme);
+  saveState();
+  renderHeader();
+}
+
+// ===== SETTINGS =====
+function openSettings() {
+  document.getElementById('settingsOverlay').classList.add('active');
+}
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+function exportData() {
+  const data = JSON.stringify({ sections: appState.sections, assignments: appState.assignments }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'quest-board-export.json';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetCoins() {
+  if (!confirm('Reset coins, level, and streak to zero?')) return;
+  appState.coins = 0;
+  appState.streak = 0;
+  appState.lastCompletionDate = null;
+  saveState();
+  render();
+}
+
+function resetAll() {
+  if (!confirm('This will delete ALL data. Are you sure?')) return;
+  if (!confirm('Really? This cannot be undone!')) return;
+  localStorage.removeItem('questBoardState');
+  appState = defaultState();
+  saveState();
+  render();
+  closeSettings();
+}
+
+// ===== UTILITIES =====
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+// ===== EVENT LISTENERS =====
+document.addEventListener('DOMContentLoaded', () => {
+  // Apply saved theme
+  document.documentElement.setAttribute('data-theme', appState.theme);
+
+  // Reset repeating assignment completions from previous days
+  const today = todayStr();
+  for (const a of appState.assignments) {
+    if (a.type === 'repeating' && a.completedDate && a.completedDate !== today) {
+      a.completedDate = null;
+    }
+  }
+  saveState();
+
+  render();
+
+  // View tabs
+  document.getElementById('viewTabs').addEventListener('click', e => {
+    const tab = e.target.closest('.view-tab');
+    if (!tab) return;
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentView = tab.dataset.view;
+    render();
+  });
+
+  // Sort
+  document.getElementById('sortSelect').addEventListener('change', e => {
+    currentSort = e.target.value;
+    render();
+  });
+
+  // Search
+  document.getElementById('searchBox').addEventListener('input', e => {
+    searchQuery = e.target.value;
+    render();
+  });
+
+  // FAB
+  document.getElementById('addFab').addEventListener('click', openModal);
+
+  // Modal type toggle
+  document.getElementById('typeOneTime').addEventListener('click', () => setAssignmentType('onetime'));
+  document.getElementById('typeRepeating').addEventListener('click', () => setAssignmentType('repeating'));
+
+  // Add section inline
+  document.getElementById('addSectionBtn').addEventListener('click', addSection);
+
+  // Save / Cancel
+  document.getElementById('saveBtn').addEventListener('click', saveAssignment);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+  // Close modal on overlay click
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  // Theme
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+  // Settings
+  document.getElementById('settingsBtn').addEventListener('click', openSettings);
+  document.getElementById('closeSettingsBtn').addEventListener('click', closeSettings);
+  document.getElementById('exportBtn').addEventListener('click', exportData);
+  document.getElementById('resetCoinsBtn').addEventListener('click', resetCoins);
+  document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+  document.getElementById('settingsOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeSettings();
+  });
+
+  // Keyboard: Escape closes modals
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeSettings();
+    }
+  });
+});
+</script>
+</body>
+</html>
