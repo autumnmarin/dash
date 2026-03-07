@@ -613,20 +613,6 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   border-color: var(--gold);
 }
 
-.color-palette {
-  display: flex; gap: 8px; flex-wrap: wrap;
-}
-.color-swatch {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.color-swatch.active, .color-swatch:hover {
-  border-color: var(--text-primary);
-  transform: scale(1.15);
-}
 
 .modal-actions {
   display: flex; gap: 10px; margin-top: 24px;
@@ -651,20 +637,6 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .btn-cancel:hover { border-color: var(--red); color: var(--red); }
 
-.inline-new-section {
-  display: flex; gap: 6px; margin-top: 6px;
-}
-.inline-new-section input {
-  flex: 1;
-}
-.inline-new-section button {
-  padding: 8px 14px;
-  background: var(--gold);
-  color: #1a1a2e;
-  font-weight: 700;
-  border-radius: 8px;
-  font-size: 0.85rem;
-}
 
 /* ===== SETTINGS PANEL ===== */
 .settings-overlay {
@@ -861,13 +833,6 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 
     <label>Class Section *</label>
     <select id="inputSection"></select>
-    <div class="inline-new-section" id="newSectionRow">
-      <input type="text" id="inputNewSection" placeholder="New section name...">
-      <div style="display:flex;gap:4px">
-        <div class="color-palette" id="newSectionPalette"></div>
-      </div>
-      <button id="addSectionBtn">Add</button>
-    </div>
 
     <label>Type</label>
     <div class="type-toggle">
@@ -920,7 +885,6 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
    ======================================================================= */
 
 // ===== CONSTANTS =====
-const COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e84393','#636e72'];
 const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const DAY_SHORTS = ['S','M','T','W','T','F','S'];
 
@@ -1597,12 +1561,9 @@ function editAssignment(id) {
 // ===== MODAL =====
 let selectedType = 'onetime';
 let selectedDays = [];
-let newSectionColor = COLORS[0];
-
 function openModal() {
   document.getElementById('modalOverlay').classList.add('active');
   populateSectionDropdown();
-  renderNewSectionPalette();
   renderDaysPicker();
 }
 
@@ -1629,26 +1590,12 @@ function setAssignmentType(type) {
 
 function populateSectionDropdown() {
   const sel = document.getElementById('inputSection');
-  sel.innerHTML = appState.sections.map(s =>
-    `<option value="${s.id}">${escHtml(s.name)}</option>`
-  ).join('');
-  if (appState.sections.length === 0) {
-    sel.innerHTML = '<option value="">-- Create a section first --</option>';
-  }
+  sel.innerHTML = PRESET_SECTIONS.map(p => {
+    const id = 'sec_' + p.name.toLowerCase().replace(/\s+/g, '_');
+    return `<option value="${id}">${escHtml(p.name)}</option>`;
+  }).join('');
 }
 
-function renderNewSectionPalette() {
-  const container = document.getElementById('newSectionPalette');
-  container.innerHTML = COLORS.map(c =>
-    `<div class="color-swatch ${c === newSectionColor ? 'active' : ''}"
-          style="background:${c}" onclick="pickNewSectionColor('${c}')"></div>`
-  ).join('');
-}
-
-function pickNewSectionColor(c) {
-  newSectionColor = c;
-  renderNewSectionPalette();
-}
 
 function renderDaysPicker() {
   const container = document.getElementById('daysPicker');
@@ -1665,21 +1612,6 @@ function toggleDay(i) {
   renderDaysPicker();
 }
 
-function addSection() {
-  const name = document.getElementById('inputNewSection').value.trim();
-  if (!name) return;
-  const section = {
-    id: 'sec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-    name,
-    color: newSectionColor,
-    collapsed: false,
-  };
-  appState.sections.push(section);
-  document.getElementById('inputNewSection').value = '';
-  saveState();
-  populateSectionDropdown();
-  document.getElementById('inputSection').value = section.id;
-}
 
 function saveAssignment() {
   const title = document.getElementById('inputTitle').value.trim();
@@ -1828,9 +1760,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Modal type toggle
   document.getElementById('typeOneTime').addEventListener('click', () => setAssignmentType('onetime'));
   document.getElementById('typeRepeating').addEventListener('click', () => setAssignmentType('repeating'));
-
-  // Add section inline
-  document.getElementById('addSectionBtn').addEventListener('click', addSection);
 
   // Save / Cancel
   document.getElementById('saveBtn').addEventListener('click', saveAssignment);
