@@ -64,6 +64,73 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 ::-webkit-scrollbar-track { background: var(--bg-secondary); }
 ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
 
+/* ===== LOGIN SCREEN ===== */
+.login-screen {
+  position: fixed; inset: 0;
+  background: var(--bg-primary);
+  z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+}
+.login-screen.hidden { display: none; }
+.login-box {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 36px;
+  text-align: center;
+  max-width: 400px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px var(--gold-glow);
+}
+.login-box h1 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 2rem;
+  margin-bottom: 8px;
+  text-shadow: 0 0 30px var(--gold-glow);
+}
+.login-box .subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+}
+.login-box input {
+  width: 100%; padding: 14px 18px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  text-align: center;
+  transition: border var(--transition);
+}
+.login-box input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.login-box input::placeholder { color: var(--text-muted); }
+.login-box .login-btn {
+  display: block; width: 100%;
+  margin-top: 16px; padding: 14px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #1a1a2e;
+  font-weight: 800; font-size: 1.05rem;
+  border-radius: 12px;
+  letter-spacing: 1px;
+  transition: all var(--transition);
+}
+.login-box .login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--gold-glow);
+}
+.login-box .login-hint {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 12px;
+}
+
 /* ===== STICKY HEADER ===== */
 .header {
   position: sticky; top: 0; z-index: 100;
@@ -78,6 +145,9 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: 10px;
 }
+.header-left {
+  display: flex; align-items: center; gap: 14px;
+}
 .header-title {
   font-family: 'Cinzel', serif;
   font-size: 1.5rem; font-weight: 900;
@@ -85,6 +155,29 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   text-shadow: 0 0 20px var(--gold-glow);
   letter-spacing: 2px;
 }
+.header-user {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,215,0,0.08);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px 4px 8px;
+  font-size: 0.85rem; color: var(--text-secondary);
+}
+.header-user .user-avatar {
+  width: 22px; height: 22px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: #1a1a2e; font-weight: 900;
+}
+.header-user .logout-btn {
+  background: none; color: var(--text-muted);
+  font-size: 0.75rem; padding: 0 0 0 6px;
+  text-decoration: underline;
+  transition: color var(--transition);
+}
+.header-user .logout-btn:hover { color: var(--red); }
+
 .header-stats {
   display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
 }
@@ -671,6 +764,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 /* ===== RESPONSIVE ===== */
 @media (max-width: 700px) {
   .header-inner { flex-direction: column; align-items: stretch; }
+  .header-left { flex-wrap: wrap; }
   .header-stats { flex-direction: column; gap: 8px; }
   .xp-container { min-width: unset; }
   .toolbar { flex-direction: column; }
@@ -686,10 +780,29 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 </head>
 <body>
 
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>Quest Board</h1>
+    <p class="subtitle">Your gamified assignment dashboard</p>
+    <input type="text" id="usernameInput" placeholder="Enter your name..." autofocus
+           maxlength="30" autocomplete="off">
+    <button class="login-btn" id="loginBtn">Begin Your Quest</button>
+    <p class="login-hint">No password needed &mdash; your name saves your progress on this device.</p>
+  </div>
+</div>
+
 <!-- ===== HEADER ===== -->
 <header class="header">
   <div class="header-inner">
-    <div class="header-title">Quest Board</div>
+    <div class="header-left">
+      <div class="header-title">Quest Board</div>
+      <div class="header-user" id="headerUser">
+        <div class="user-avatar" id="userAvatar"></div>
+        <span id="userName"></span>
+        <button class="logout-btn" id="logoutBtn">switch</button>
+      </div>
+    </div>
     <div class="header-stats">
       <div class="coin-display" id="coinDisplay">
         <div class="coin-icon">$</div>
@@ -817,7 +930,24 @@ const LEVELS = [
   { title: 'Sage',       minCoins: 300 },
   { title: 'Archmage',   minCoins: 700 },
 ];
-const XP_PER_LEVEL = 100; // XP within a level bracket before visual bar fills
+const XP_PER_LEVEL = 100;
+
+// Preset class sections with assigned colors
+const PRESET_SECTIONS = [
+  { name: 'English',    color: '#3498db' },
+  { name: 'Spanish',    color: '#e67e22' },
+  { name: 'Math',       color: '#2ecc71' },
+  { name: 'Theology',   color: '#9b59b6' },
+  { name: 'US History', color: '#e74c3c' },
+  { name: 'Physics',    color: '#1abc9c' },
+];
+
+// ===== USERNAME / LOGIN =====
+let currentUser = localStorage.getItem('questBoard_currentUser') || null;
+
+function storageKey(user) {
+  return 'questBoard_' + (user || 'default');
+}
 
 // ===== DEFAULT STATE =====
 function defaultState() {
@@ -826,18 +956,19 @@ function defaultState() {
     streak: 0,
     lastCompletionDate: null,
     theme: 'dark',
-    sections: [],      // { id, name, color, collapsed }
-    assignments: [],   // { id, title, sectionId, type, dueDate, days, priority, notes, completed, completedDate }
+    sections: [],
+    assignments: [],
     editingId: null,
+    seeded: false,  // tracks whether preset data was seeded
   };
 }
 
 // ===== STATE MANAGEMENT =====
-let appState = loadState();
+let appState = defaultState();
 
 function loadState() {
   try {
-    const raw = localStorage.getItem('questBoardState');
+    const raw = localStorage.getItem(storageKey(currentUser));
     if (raw) {
       const parsed = JSON.parse(raw);
       return { ...defaultState(), ...parsed };
@@ -847,7 +978,105 @@ function loadState() {
 }
 
 function saveState() {
-  localStorage.setItem('questBoardState', JSON.stringify(appState));
+  localStorage.setItem(storageKey(currentUser), JSON.stringify(appState));
+}
+
+/** Seed preset class sections and starter assignments for a new user */
+function seedPresetData() {
+  if (appState.seeded) return;
+
+  // Create sections
+  const sectionIds = {};
+  for (const preset of PRESET_SECTIONS) {
+    const id = 'sec_' + preset.name.toLowerCase().replace(/\s+/g, '_');
+    appState.sections.push({
+      id,
+      name: preset.name,
+      color: preset.color,
+      collapsed: false,
+    });
+    sectionIds[preset.name] = id;
+  }
+
+  // Membean: 3 repeating assignments under English, due every Sunday
+  for (let i = 1; i <= 3; i++) {
+    appState.assignments.push({
+      id: 'asgn_membean_' + i,
+      title: 'Membean ' + i,
+      sectionId: sectionIds['English'],
+      type: 'repeating',
+      dueDate: null,
+      days: [0], // Sunday
+      priority: 'med',
+      notes: 'Weekly Membean training session. New set starts each Monday, due Sunday.',
+      completed: false,
+      completedDate: null,
+    });
+  }
+
+  // Spiral: repeating assignment under Math, every Monday
+  appState.assignments.push({
+    id: 'asgn_spiral_1',
+    title: 'Spiral',
+    sectionId: sectionIds['Math'],
+    type: 'repeating',
+    dueDate: null,
+    days: [1], // Monday (assigned Monday, due the following Monday)
+    priority: 'med',
+    notes: 'Weekly Spiral assignment. Assigned each Monday, due the following Monday.',
+    completed: false,
+    completedDate: null,
+  });
+
+  appState.seeded = true;
+  saveState();
+}
+
+// ===== LOGIN FLOW =====
+function showLogin() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function hideLogin() {
+  document.getElementById('loginScreen').classList.add('hidden');
+}
+
+function doLogin(username) {
+  username = username.trim();
+  if (!username) return;
+  currentUser = username;
+  localStorage.setItem('questBoard_currentUser', currentUser);
+  appState = loadState();
+
+  // Seed preset data for new users
+  if (!appState.seeded) {
+    seedPresetData();
+  }
+
+  // Update UI
+  hideLogin();
+  updateUserDisplay();
+  document.documentElement.setAttribute('data-theme', appState.theme);
+
+  // Reset repeating completions from previous days
+  resetRepeatingCompletions();
+  saveState();
+  render();
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('questBoard_currentUser');
+  appState = defaultState();
+  showLogin();
+  document.getElementById('usernameInput').value = '';
+  document.getElementById('usernameInput').focus();
+}
+
+function updateUserDisplay() {
+  if (!currentUser) return;
+  document.getElementById('userName').textContent = currentUser;
+  document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
 }
 
 // ===== DATE HELPERS =====
@@ -914,8 +1143,18 @@ function isCompleted(a) {
 /** Is assignment overdue? */
 function isOverdue(a) {
   if (isCompleted(a)) return false;
-  if (a.type === 'repeating') return false; // repeating items recur, not overdue
+  if (a.type === 'repeating') return false;
   return a.dueDate && a.dueDate < todayStr();
+}
+
+/** Reset repeating completions from previous days */
+function resetRepeatingCompletions() {
+  const today = todayStr();
+  for (const a of appState.assignments) {
+    if (a.type === 'repeating' && a.completedDate && a.completedDate !== today) {
+      a.completedDate = null;
+    }
+  }
 }
 
 // ===== LEVEL HELPERS =====
@@ -947,7 +1186,7 @@ function getXpProgress(coins) {
 // ===== STREAK LOGIC =====
 function updateStreak() {
   const today = todayStr();
-  if (appState.lastCompletionDate === today) return; // already updated today
+  if (appState.lastCompletionDate === today) return;
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   const yStr = yesterday.toISOString().slice(0, 10);
@@ -1011,7 +1250,6 @@ function earnCoins(amount, sourceEl) {
   appState.coins += amount;
   const newLevel = getLevelIndex(appState.coins);
 
-  // Animation origin
   let x = window.innerWidth / 2, y = window.innerHeight / 2;
   if (sourceEl) {
     const rect = sourceEl.getBoundingClientRect();
@@ -1038,7 +1276,6 @@ function completeAssignment(id, checkboxEl) {
     a.completed = !a.completed;
     a.completedDate = a.completed ? todayStr() : null;
   } else {
-    // Repeating: toggle today's completion
     if (isRepeatingCompletedToday(a)) {
       a.completedDate = null;
     } else {
@@ -1049,20 +1286,12 @@ function completeAssignment(id, checkboxEl) {
   const nowCompleted = isCompleted(a);
 
   if (!wasCompleted && nowCompleted) {
-    // Calculate coins
     let coins = a.type === 'repeating' ? 5 : 10;
-
-    // Early bonus (one-time only, completed before due date)
     if (a.type === 'onetime' && a.dueDate && todayStr() < a.dueDate) {
       coins += 15;
     }
-
     earnCoins(coins, checkboxEl);
-
-    // Check section completion bonus
     checkSectionBonus(a.sectionId);
-
-    // Check if all today's assignments are done
     checkAllTodayDone();
   }
 
@@ -1114,7 +1343,6 @@ function filterAssignments() {
 
   let list = [...appState.assignments];
 
-  // View filter
   switch (currentView) {
     case 'today':
       list = list.filter(a => {
@@ -1129,9 +1357,9 @@ function filterAssignments() {
       list = list.filter(a => {
         if (a.type === 'onetime') {
           if (a.completed) return false;
-          return a.dueDate >= weekStart && a.dueDate <= weekEnd || isOverdue(a);
+          return (a.dueDate >= weekStart && a.dueDate <= weekEnd) || isOverdue(a);
         }
-        return !isRepeatingCompletedToday(a) || true; // show all repeating
+        return true; // show all repeating in week view
       });
       break;
     case 'upcoming':
@@ -1183,7 +1411,6 @@ function renderHeader() {
   document.getElementById('xpLabel').textContent = 'Lv ' + (lvIdx + 1);
   document.getElementById('xpBar').style.width = (getXpProgress(appState.coins) * 100) + '%';
 
-  // Theme icon
   document.getElementById('themeToggle').innerHTML = appState.theme === 'dark' ? '&#x263E;' : '&#x2600;';
 }
 
@@ -1218,7 +1445,6 @@ function renderSections() {
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     const incomplete = total - done;
 
-    // Check if there are incomplete assignments for "Complete All Today"
     const hasTodayIncomplete = assignments.some(a => !isCompleted(a) && (
       (a.type === 'onetime' && a.dueDate === todayStr()) || isRepeatingDueToday(a)
     ));
@@ -1249,7 +1475,6 @@ function renderSections() {
 function renderAssignment(a) {
   const completed = isCompleted(a);
   const overdue = isOverdue(a);
-  const section = appState.sections.find(s => s.id === a.sectionId);
 
   let dueBadge = '';
   if (a.type === 'onetime' && a.dueDate) {
@@ -1326,13 +1551,11 @@ function completeAllSection(sectionId) {
     appState.coins += coins;
   }
   if (targets.length > 0) {
-    // Early bonus for qualifying assignments
     for (const a of targets) {
       if (a.type === 'onetime' && a.dueDate && today < a.dueDate) appState.coins += 15;
     }
     updateStreak();
     spawnCoinBurst(window.innerWidth / 2, window.innerHeight / 2, 15);
-    // Section bonus
     if (targets.length > 1) earnCoins(25, document.getElementById('coinDisplay'));
     checkAllTodayDone();
   }
@@ -1359,7 +1582,6 @@ function editAssignment(id) {
   document.getElementById('inputPriority').value = a.priority;
   document.getElementById('inputNotes').value = a.notes || '';
 
-  // Type
   setAssignmentType(a.type);
   if (a.type === 'onetime') {
     document.getElementById('inputDueDate').value = a.dueDate || '';
@@ -1386,7 +1608,6 @@ function openModal() {
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('active');
-  // Reset form
   document.getElementById('inputTitle').value = '';
   document.getElementById('inputDueDate').value = '';
   document.getElementById('inputNotes').value = '';
@@ -1457,7 +1678,6 @@ function addSection() {
   document.getElementById('inputNewSection').value = '';
   saveState();
   populateSectionDropdown();
-  // Select the new section
   document.getElementById('inputSection').value = section.id;
 }
 
@@ -1485,11 +1705,9 @@ function saveAssignment() {
   }
 
   if (appState.editingId) {
-    // Update existing
     const a = appState.assignments.find(x => x.id === appState.editingId);
     if (a) Object.assign(a, data);
   } else {
-    // Create new
     data.id = 'asgn_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     data.completed = false;
     data.completedDate = null;
@@ -1540,8 +1758,9 @@ function resetCoins() {
 function resetAll() {
   if (!confirm('This will delete ALL data. Are you sure?')) return;
   if (!confirm('Really? This cannot be undone!')) return;
-  localStorage.removeItem('questBoardState');
+  localStorage.removeItem(storageKey(currentUser));
   appState = defaultState();
+  seedPresetData(); // re-seed preset classes
   saveState();
   render();
   closeSettings();
@@ -1554,25 +1773,32 @@ function escHtml(str) {
   return div.innerHTML;
 }
 
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
 // ===== EVENT LISTENERS =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply saved theme
-  document.documentElement.setAttribute('data-theme', appState.theme);
+  // Login handling
+  const loginBtn = document.getElementById('loginBtn');
+  const usernameInput = document.getElementById('usernameInput');
 
-  // Reset repeating assignment completions from previous days
-  const today = todayStr();
-  for (const a of appState.assignments) {
-    if (a.type === 'repeating' && a.completedDate && a.completedDate !== today) {
-      a.completedDate = null;
-    }
+  loginBtn.addEventListener('click', () => doLogin(usernameInput.value));
+  usernameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin(usernameInput.value);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', doLogout);
+
+  // Check if user is already logged in
+  if (currentUser) {
+    appState = loadState();
+    if (!appState.seeded) seedPresetData();
+    hideLogin();
+    updateUserDisplay();
+    document.documentElement.setAttribute('data-theme', appState.theme);
+    resetRepeatingCompletions();
+    saveState();
+    render();
+  } else {
+    showLogin();
   }
-  saveState();
-
-  render();
 
   // View tabs
   document.getElementById('viewTabs').addEventListener('click', e => {
