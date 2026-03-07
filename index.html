@@ -3,45 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quest Board - Assignment Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Mission Control - Assignment Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== CSS RESET & VARIABLES ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-card: #1e2a45;
-  --bg-card-hover: #253352;
-  --text-primary: #f5f0e1;
-  --text-secondary: #b8b0a0;
-  --text-muted: #7a7468;
-  --gold: #FFD700;
-  --gold-dark: #b8960f;
-  --gold-glow: rgba(255, 215, 0, 0.3);
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #121218;
+  --bg-card: #1a1a24;
+  --bg-card-hover: #22222e;
+  --text-primary: #e8e8f0;
+  --text-secondary: #9898a8;
+  --text-muted: #5a5a6e;
+  --accent: #e63946;
+  --accent-dark: #b42d38;
+  --accent-glow: rgba(230, 57, 70, 0.3);
+  --pool-blue: #00b4d8;
+  --pool-blue-dark: #0096b7;
+  --pool-glow: rgba(0, 180, 216, 0.3);
   --amber: #FFBF00;
-  --cream: #f5f0e1;
-  --red: #e74c3c;
+  --cream: #e8e8f0;
+  --red: #e63946;
   --red-dark: #922;
   --green: #2ecc71;
-  --blue: #3498db;
+  --blue: #00b4d8;
   --purple: #9b59b6;
-  --border: rgba(255, 215, 0, 0.15);
-  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --border: rgba(230, 57, 70, 0.15);
+  --shadow: 0 4px 20px rgba(0,0,0,0.6);
   --radius: 12px;
   --transition: 0.3s ease;
 }
 
 [data-theme="light"] {
-  --bg-primary: #f5f0e1;
-  --bg-secondary: #ebe4d2;
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #e4e7ec;
   --bg-card: #fff;
-  --bg-card-hover: #f9f4e8;
-  --text-primary: #2c2416;
-  --text-secondary: #5a5040;
-  --text-muted: #8a8070;
-  --border: rgba(180, 150, 80, 0.25);
+  --bg-card-hover: #f5f7fa;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a5e;
+  --text-muted: #7a7a8e;
+  --border: rgba(230, 57, 70, 0.2);
   --shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
@@ -55,14 +58,100 @@ body {
   transition: background var(--transition), color var(--transition);
 }
 
-h1, h2, h3, h4 { font-family: 'Cinzel', serif; }
+h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; }
 
 button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 4px; }
+
+/* ===== LOGIN SCREEN ===== */
+.login-screen {
+  position: fixed; inset: 0;
+  background: var(--bg-primary);
+  z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%);
+}
+.login-screen.hidden { display: none; }
+.login-box {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-dark);
+  border-radius: 20px;
+  padding: 40px 36px;
+  text-align: center;
+  max-width: 400px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 80px var(--accent-glow);
+  position: relative;
+  overflow: hidden;
+}
+.login-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: scanLine 2s ease-in-out infinite;
+}
+@keyframes scanLine {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.login-box h1 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--accent);
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+  text-shadow: 0 0 30px var(--accent-glow);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.login-box .subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 28px;
+  letter-spacing: 1px;
+}
+.login-box input {
+  width: 100%; padding: 14px 18px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  text-align: center;
+  transition: border var(--transition);
+}
+.login-box input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+.login-box input::placeholder { color: var(--text-muted); }
+.login-box .login-btn {
+  display: block; width: 100%;
+  margin-top: 16px; padding: 14px;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  color: #fff;
+  font-weight: 800; font-size: 1.05rem;
+  border-radius: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all var(--transition);
+}
+.login-box .login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--accent-glow);
+}
+.login-box .login-hint {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 12px;
+}
 
 /* ===== STICKY HEADER ===== */
 .header {
@@ -78,44 +167,71 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: 10px;
 }
-.header-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.5rem; font-weight: 900;
-  color: var(--gold);
-  text-shadow: 0 0 20px var(--gold-glow);
-  letter-spacing: 2px;
+.header-left {
+  display: flex; align-items: center; gap: 14px;
 }
+.header-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem; font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 20px var(--accent-glow);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.header-user {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px 4px 8px;
+  font-size: 0.85rem; color: var(--text-secondary);
+}
+.header-user .user-avatar {
+  width: 22px; height: 22px;
+  background: linear-gradient(135deg, var(--pool-blue-dark), var(--pool-blue));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: #fff; font-weight: 900;
+}
+.header-user .logout-btn {
+  background: none; color: var(--text-muted);
+  font-size: 0.75rem; padding: 0 0 0 6px;
+  text-decoration: underline;
+  transition: color var(--transition);
+}
+.header-user .logout-btn:hover { color: var(--accent); }
+
 .header-stats {
   display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
 }
 
-/* Coin display */
+/* Coin display — now "points" with pool-blue accent */
 .coin-display {
   display: flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,191,0,0.08));
-  border: 1px solid var(--gold-dark);
+  background: linear-gradient(135deg, rgba(0,180,216,0.15), rgba(0,180,216,0.05));
+  border: 1px solid var(--pool-blue-dark);
   border-radius: 30px; padding: 6px 16px;
-  font-weight: 800; font-size: 1.1rem; color: var(--gold);
+  font-weight: 800; font-size: 1.1rem; color: var(--pool-blue);
   position: relative; overflow: visible;
 }
 .coin-icon {
   width: 28px; height: 28px;
-  background: radial-gradient(circle at 35% 35%, #ffe066, #FFD700, #b8960f);
+  background: radial-gradient(circle at 35% 35%, #48cae4, #00b4d8, #0077b6);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 900; color: #7a5c00;
-  box-shadow: 0 0 10px var(--gold-glow);
-  animation: coinSpin 3s linear infinite;
+  font-size: 16px; font-weight: 900; color: #fff;
+  box-shadow: 0 0 10px var(--pool-glow);
+  animation: ballBob 2s ease-in-out infinite;
 }
-@keyframes coinSpin {
-  0%, 100% { transform: rotateY(0deg); }
-  50% { transform: rotateY(180deg); }
+@keyframes ballBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
 
 /* Streak */
 .streak-display {
   display: flex; align-items: center; gap: 5px;
-  color: #ff6b35; font-weight: 700; font-size: 0.95rem;
+  color: var(--accent); font-weight: 700; font-size: 0.95rem;
 }
 
 /* XP Bar */
@@ -124,25 +240,39 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .xp-bar-outer {
   flex: 1; height: 14px;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.4);
   border-radius: 7px; overflow: hidden;
   border: 1px solid var(--border);
 }
 .xp-bar-inner {
   height: 100%;
-  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--amber));
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent), #ff6b6b);
   border-radius: 7px;
   transition: width 0.6s ease;
-  box-shadow: 0 0 8px var(--gold-glow);
+  box-shadow: 0 0 8px var(--accent-glow);
+  position: relative;
+}
+.xp-bar-inner::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  animation: xpShine 2s ease-in-out infinite;
+}
+@keyframes xpShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 .xp-label {
-  font-size: 0.75rem; font-weight: 700; color: var(--gold);
+  font-size: 0.75rem; font-weight: 700; color: var(--accent);
   white-space: nowrap;
+  font-family: 'Orbitron', sans-serif;
 }
 .level-title {
-  font-family: 'Cinzel', serif;
-  font-size: 0.85rem; color: var(--amber);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem; color: var(--pool-blue);
   font-weight: 700; white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Header controls */
@@ -151,16 +281,16 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .icon-btn {
   width: 36px; height: 36px;
-  background: rgba(255,215,0,0.1);
+  background: rgba(230, 57, 70, 0.1);
   border: 1px solid var(--border);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: var(--gold);
+  color: var(--accent);
   font-size: 1.1rem;
   transition: all var(--transition);
 }
 .icon-btn:hover {
-  background: rgba(255,215,0,0.25);
+  background: rgba(230, 57, 70, 0.25);
   transform: scale(1.1);
 }
 
@@ -190,11 +320,11 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   transition: all var(--transition);
 }
 .view-tab.active {
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  color: #1a1a2e;
-  box-shadow: 0 2px 10px var(--gold-glow);
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  color: #fff;
+  box-shadow: 0 2px 10px var(--accent-glow);
 }
-.view-tab:hover:not(.active) { color: var(--gold); }
+.view-tab:hover:not(.active) { color: var(--accent); }
 
 .sort-select {
   padding: 8px 12px;
@@ -219,7 +349,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .search-box:focus {
   outline: none;
-  border-color: var(--gold);
+  border-color: var(--accent);
 }
 .search-wrapper {
   position: relative; flex: 1; min-width: 180px;
@@ -255,24 +385,26 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   border-radius: 4px; flex-shrink: 0;
 }
 .section-name {
-  font-family: 'Cinzel', serif;
-  font-weight: 700; font-size: 1.05rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700; font-size: 0.9rem;
   flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .section-badge {
-  background: rgba(255,215,0,0.15);
-  color: var(--gold);
+  background: rgba(230, 57, 70, 0.15);
+  color: var(--accent);
   font-size: 0.75rem; font-weight: 700;
   padding: 3px 10px; border-radius: 20px;
 }
 .section-progress {
   width: 80px; height: 8px;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.4);
   border-radius: 4px; overflow: hidden;
 }
 .section-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--green), #27ae60);
+  background: linear-gradient(90deg, var(--pool-blue-dark), var(--pool-blue));
   border-radius: 4px;
   transition: width 0.4s ease;
 }
@@ -289,12 +421,14 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .btn-complete-all {
   padding: 6px 14px;
-  background: linear-gradient(135deg, var(--green), #27ae60);
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
   color: #fff; border-radius: 8px;
   font-size: 0.8rem; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   transition: all var(--transition);
 }
-.btn-complete-all:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(46,204,113,0.3); }
+.btn-complete-all:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
 
 /* ===== ASSIGNMENT CARD ===== */
 .assignment {
@@ -308,22 +442,27 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   animation: slideIn 0.3s ease;
 }
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 .assignment:hover {
   border-color: var(--border);
   background: var(--bg-card-hover);
 }
 .assignment.completed-card {
-  opacity: 0.55;
+  opacity: 0.45;
 }
 .assignment.completed-card .assignment-title {
   text-decoration: line-through;
 }
 .assignment.overdue {
-  border-color: var(--red);
-  background: rgba(231, 76, 60, 0.08);
+  border-color: var(--accent);
+  background: rgba(230, 57, 70, 0.08);
+  animation: overdueFlash 2s ease-in-out infinite;
+}
+@keyframes overdueFlash {
+  0%, 100% { border-color: var(--accent); }
+  50% { border-color: rgba(230, 57, 70, 0.4); }
 }
 
 /* Custom checkbox */
@@ -336,15 +475,15 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .checkbox-visual {
   width: 28px; height: 28px;
-  border: 2px solid var(--gold-dark);
+  border: 2px solid var(--pool-blue-dark);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   transition: all var(--transition);
   font-size: 16px;
 }
 .checkbox-wrapper input:checked + .checkbox-visual {
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--pool-blue-dark), var(--pool-blue));
+  border-color: var(--pool-blue);
   animation: checkBounce 0.4s ease;
 }
 @keyframes checkBounce {
@@ -354,7 +493,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   100% { transform: scale(1); }
 }
 .checkbox-wrapper input:checked + .checkbox-visual::after {
-  content: '\2714'; color: #1a1a2e; font-weight: 900;
+  content: '\2714'; color: #fff; font-weight: 900;
 }
 
 .assignment-content { flex: 1; min-width: 0; }
@@ -372,21 +511,21 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   width: 8px; height: 8px;
   border-radius: 50%; display: inline-block;
 }
-.priority-low { background: var(--green); }
+.priority-low { background: var(--pool-blue); }
 .priority-med { background: var(--amber); }
-.priority-high { background: var(--red); }
+.priority-high { background: var(--accent); }
 
 .badge {
   font-size: 0.7rem; font-weight: 700;
   padding: 2px 8px; border-radius: 12px;
 }
 .badge-repeat {
-  background: rgba(155, 89, 182, 0.2);
-  color: var(--purple);
+  background: rgba(0, 180, 216, 0.15);
+  color: var(--pool-blue);
 }
 .badge-overdue {
-  background: rgba(231, 76, 60, 0.2);
-  color: var(--red);
+  background: rgba(230, 57, 70, 0.2);
+  color: var(--accent);
 }
 .badge-early {
   background: rgba(46, 204, 113, 0.2);
@@ -406,34 +545,34 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   display: flex; align-items: center; justify-content: center;
 }
 .assignment-actions button:hover {
-  background: rgba(255,215,0,0.1);
-  color: var(--gold);
+  background: rgba(0,180,216,0.1);
+  color: var(--pool-blue);
 }
-.delete-btn:hover { color: var(--red) !important; background: rgba(231,76,60,0.1) !important; }
+.delete-btn:hover { color: var(--accent) !important; background: rgba(230,57,70,0.1) !important; }
 
 /* ===== FAB ===== */
 .fab {
   position: fixed; bottom: 28px; right: 28px;
   width: 60px; height: 60px;
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 2rem; color: #1a1a2e; font-weight: 900;
-  box-shadow: 0 4px 24px var(--gold-glow), 0 0 40px rgba(255,215,0,0.15);
+  font-size: 2rem; color: #fff; font-weight: 900;
+  box-shadow: 0 4px 24px var(--accent-glow), 0 0 40px rgba(230,57,70,0.15);
   z-index: 90;
   transition: all var(--transition);
-  animation: fabGlow 2s ease-in-out infinite alternate;
+  animation: fabPulse 2s ease-in-out infinite alternate;
 }
-@keyframes fabGlow {
-  from { box-shadow: 0 4px 24px var(--gold-glow); }
-  to { box-shadow: 0 4px 40px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.2); }
+@keyframes fabPulse {
+  from { box-shadow: 0 4px 24px var(--accent-glow); }
+  to { box-shadow: 0 4px 40px rgba(230,57,70,0.5), 0 0 60px rgba(230,57,70,0.2); }
 }
 .fab:hover { transform: scale(1.1) rotate(90deg); }
 
 /* ===== MODAL ===== */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.8);
   backdrop-filter: blur(4px);
   z-index: 200;
   display: flex; align-items: center; justify-content: center;
@@ -450,20 +589,32 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   padding: 28px;
   width: 100%; max-width: 520px;
   max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   transform: translateY(20px);
   transition: transform var(--transition);
+  position: relative;
+}
+.modal::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 .modal-overlay.active .modal { transform: translateY(0); }
 
 .modal h2 {
-  color: var(--gold); margin-bottom: 20px;
-  font-size: 1.3rem;
+  color: var(--accent); margin-bottom: 20px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 .modal label {
   display: block; font-weight: 700;
   font-size: 0.85rem; color: var(--text-secondary);
   margin-bottom: 6px; margin-top: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
 }
 .modal input[type="text"],
 .modal input[type="date"],
@@ -479,7 +630,8 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   transition: border var(--transition);
 }
 .modal input:focus, .modal textarea:focus, .modal select:focus {
-  outline: none; border-color: var(--gold);
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 .modal textarea { resize: vertical; min-height: 60px; }
 
@@ -498,8 +650,8 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   transition: all var(--transition);
 }
 .type-toggle button.active {
-  background: var(--gold);
-  color: #1a1a2e;
+  background: var(--accent);
+  color: #fff;
 }
 
 .days-picker {
@@ -515,24 +667,9 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   transition: all var(--transition);
 }
 .day-btn.active {
-  background: var(--gold);
-  color: #1a1a2e;
-  border-color: var(--gold);
-}
-
-.color-palette {
-  display: flex; gap: 8px; flex-wrap: wrap;
-}
-.color-swatch {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.color-swatch.active, .color-swatch:hover {
-  border-color: var(--text-primary);
-  transform: scale(1.15);
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 .modal-actions {
@@ -540,13 +677,15 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .btn-save {
   flex: 1; padding: 12px;
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  color: #fff;
   font-weight: 800; font-size: 0.95rem;
   border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   transition: all var(--transition);
 }
-.btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--gold-glow); }
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
 .btn-cancel {
   padding: 12px 20px;
   background: transparent;
@@ -556,27 +695,12 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   border-radius: 10px;
   transition: all var(--transition);
 }
-.btn-cancel:hover { border-color: var(--red); color: var(--red); }
-
-.inline-new-section {
-  display: flex; gap: 6px; margin-top: 6px;
-}
-.inline-new-section input {
-  flex: 1;
-}
-.inline-new-section button {
-  padding: 8px 14px;
-  background: var(--gold);
-  color: #1a1a2e;
-  font-weight: 700;
-  border-radius: 8px;
-  font-size: 0.85rem;
-}
+.btn-cancel:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ===== SETTINGS PANEL ===== */
 .settings-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.8);
   backdrop-filter: blur(4px);
   z-index: 200;
   display: flex; align-items: center; justify-content: center;
@@ -592,10 +716,12 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   border-radius: 16px;
   padding: 28px;
   width: 100%; max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 }
 .settings-panel h2 {
-  color: var(--gold); margin-bottom: 20px;
+  color: var(--accent); margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 .settings-btn {
   display: block; width: 100%;
@@ -609,31 +735,36 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   transition: all var(--transition);
 }
 .settings-btn:hover {
-  border-color: var(--gold);
+  border-color: var(--accent);
   background: var(--bg-card-hover);
 }
-.settings-btn.danger { color: var(--red); }
-.settings-btn.danger:hover { border-color: var(--red); }
+.settings-btn.danger { color: var(--accent); }
+.settings-btn.danger:hover { border-color: var(--accent); }
 
-/* ===== COIN BURST ANIMATION ===== */
+/* ===== POINT BURST ANIMATION (water splash) ===== */
 .coin-particle {
   position: fixed;
-  width: 12px; height: 12px;
-  background: radial-gradient(circle, #ffe066, #FFD700, #b8960f);
+  width: 10px; height: 10px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 300;
-  animation: coinBurst 0.8s ease-out forwards;
+  animation: splashBurst 0.8s ease-out forwards;
 }
-@keyframes coinBurst {
+.coin-particle:nth-child(odd) {
+  background: radial-gradient(circle, #48cae4, #00b4d8, #0077b6);
+}
+.coin-particle:nth-child(even) {
+  background: radial-gradient(circle, #ff6b6b, #e63946, #b42d38);
+}
+@keyframes splashBurst {
   0% { opacity: 1; transform: translate(0, 0) scale(1); }
-  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
 }
 
 /* ===== LEVEL UP FLASH ===== */
 .level-up-flash {
   position: fixed; inset: 0;
-  background: radial-gradient(circle, rgba(255,215,0,0.3), transparent);
+  background: radial-gradient(circle, rgba(230,57,70,0.3), transparent);
   z-index: 250;
   pointer-events: none;
   animation: levelFlash 1s ease-out forwards;
@@ -643,7 +774,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   100% { opacity: 0; }
 }
 
-/* ===== CONFETTI ===== */
+/* ===== CONFETTI (water polo balls & splashes) ===== */
 .confetti-container {
   position: fixed; inset: 0;
   pointer-events: none; z-index: 300;
@@ -651,7 +782,6 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 }
 .confetti-piece {
   position: absolute;
-  width: 10px; height: 10px;
   top: -10px;
   animation: confettiFall 3s ease-in forwards;
 }
@@ -671,6 +801,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 /* ===== RESPONSIVE ===== */
 @media (max-width: 700px) {
   .header-inner { flex-direction: column; align-items: stretch; }
+  .header-left { flex-wrap: wrap; }
   .header-stats { flex-direction: column; gap: 8px; }
   .xp-container { min-width: unset; }
   .toolbar { flex-direction: column; }
@@ -686,20 +817,39 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 </head>
 <body>
 
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>Mission Control</h1>
+    <p class="subtitle">Your mission, should you choose to accept it...</p>
+    <input type="text" id="usernameInput" placeholder="Agent codename..." autofocus
+           maxlength="30" autocomplete="off">
+    <button class="login-btn" id="loginBtn">Accept Mission</button>
+    <p class="login-hint">No password needed &mdash; your codename saves your progress on this device.</p>
+  </div>
+</div>
+
 <!-- ===== HEADER ===== -->
 <header class="header">
   <div class="header-inner">
-    <div class="header-title">Quest Board</div>
+    <div class="header-left">
+      <div class="header-title">Mission Control</div>
+      <div class="header-user" id="headerUser">
+        <div class="user-avatar" id="userAvatar"></div>
+        <span id="userName"></span>
+        <button class="logout-btn" id="logoutBtn">switch</button>
+      </div>
+    </div>
     <div class="header-stats">
       <div class="coin-display" id="coinDisplay">
-        <div class="coin-icon">$</div>
+        <div class="coin-icon">&#x1F3D0;</div>
         <span id="coinCount">0</span>
       </div>
       <div class="streak-display" id="streakDisplay" title="Day streak">
         <span>&#x1F525;</span><span id="streakCount">0</span> day streak
       </div>
       <div class="xp-container">
-        <span class="level-title" id="levelTitle">Apprentice</span>
+        <span class="level-title" id="levelTitle">Rookie</span>
         <div class="xp-bar-outer">
           <div class="xp-bar-inner" id="xpBar" style="width:0%"></div>
         </div>
@@ -728,7 +878,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
       <option value="priority">Sort: Priority</option>
     </select>
     <div class="search-wrapper">
-      <input type="text" class="search-box" id="searchBox" placeholder="Search assignments...">
+      <input type="text" class="search-box" id="searchBox" placeholder="Search missions...">
     </div>
   </div>
 
@@ -737,24 +887,17 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 </div>
 
 <!-- ===== FAB ===== -->
-<button class="fab" id="addFab" title="Add Assignment">+</button>
+<button class="fab" id="addFab" title="Add Mission">+</button>
 
 <!-- ===== ADD/EDIT MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <h2 id="modalTitle">New Quest</h2>
-    <label>Title *</label>
+    <h2 id="modalTitle">New Mission</h2>
+    <label>Mission Briefing *</label>
     <input type="text" id="inputTitle" placeholder="e.g., Read Chapter 5">
 
-    <label>Class Section *</label>
+    <label>Department *</label>
     <select id="inputSection"></select>
-    <div class="inline-new-section" id="newSectionRow">
-      <input type="text" id="inputNewSection" placeholder="New section name...">
-      <div style="display:flex;gap:4px">
-        <div class="color-palette" id="newSectionPalette"></div>
-      </div>
-      <button id="addSectionBtn">Add</button>
-    </div>
 
     <label>Type</label>
     <div class="type-toggle">
@@ -763,7 +906,7 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
     </div>
 
     <div id="dueDateGroup">
-      <label>Due Date</label>
+      <label>Deadline</label>
       <input type="date" id="inputDueDate">
     </div>
 
@@ -772,19 +915,19 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
       <div class="days-picker" id="daysPicker"></div>
     </div>
 
-    <label>Priority</label>
+    <label>Threat Level</label>
     <select id="inputPriority">
       <option value="low">Low</option>
       <option value="med" selected>Medium</option>
       <option value="high">High</option>
     </select>
 
-    <label>Notes</label>
+    <label>Intel Notes</label>
     <textarea id="inputNotes" placeholder="Optional notes..."></textarea>
 
     <div class="modal-actions">
-      <button class="btn-save" id="saveBtn">Save Quest</button>
-      <button class="btn-cancel" id="cancelBtn">Cancel</button>
+      <button class="btn-save" id="saveBtn">Deploy Mission</button>
+      <button class="btn-cancel" id="cancelBtn">Abort</button>
     </div>
   </div>
 </div>
@@ -792,32 +935,50 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
 <!-- ===== SETTINGS OVERLAY ===== -->
 <div class="settings-overlay" id="settingsOverlay">
   <div class="settings-panel">
-    <h2>Settings</h2>
-    <button class="settings-btn" id="exportBtn">&#x1F4E6; Export Assignments as JSON</button>
-    <button class="settings-btn danger" id="resetCoinsBtn">&#x1FA99; Reset Coins &amp; Level</button>
-    <button class="settings-btn danger" id="resetAllBtn">&#x1F5D1; Reset All Data</button>
+    <h2>HQ Settings</h2>
+    <button class="settings-btn" id="exportBtn">&#x1F4E6; Export Intel as JSON</button>
+    <button class="settings-btn danger" id="resetCoinsBtn">&#x1F3D0; Reset Points &amp; Rank</button>
+    <button class="settings-btn danger" id="resetAllBtn">&#x1F5D1; Burn All Records</button>
     <button class="settings-btn" id="closeSettingsBtn">Close</button>
   </div>
 </div>
 
 <script>
 /* =======================================================================
-   QUEST BOARD - Gamified Assignment Dashboard
+   MISSION CONTROL - Gamified Assignment Dashboard
+   Mission Impossible x Water Polo theme
    Pure vanilla JS, localStorage persistence, no dependencies
    ======================================================================= */
 
 // ===== CONSTANTS =====
-const COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e84393','#636e72'];
 const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const DAY_SHORTS = ['S','M','T','W','T','F','S'];
 
+// Level titles: water polo ranks with spy flair
 const LEVELS = [
-  { title: 'Apprentice', minCoins: 0 },
-  { title: 'Scholar',    minCoins: 100 },
-  { title: 'Sage',       minCoins: 300 },
-  { title: 'Archmage',   minCoins: 700 },
+  { title: 'Rookie',      minCoins: 0 },
+  { title: 'Starter',     minCoins: 100 },
+  { title: 'Captain',     minCoins: 300 },
+  { title: 'MVP Agent',   minCoins: 700 },
 ];
-const XP_PER_LEVEL = 100; // XP within a level bracket before visual bar fills
+const XP_PER_LEVEL = 100;
+
+// Fixed class sections
+const PRESET_SECTIONS = [
+  { name: 'English',    color: '#3498db' },
+  { name: 'Spanish',    color: '#e67e22' },
+  { name: 'Math',       color: '#2ecc71' },
+  { name: 'Theology',   color: '#9b59b6' },
+  { name: 'US History', color: '#e63946' },
+  { name: 'Physics',    color: '#00b4d8' },
+];
+
+// ===== USERNAME / LOGIN =====
+let currentUser = localStorage.getItem('questBoard_currentUser') || null;
+
+function storageKey(user) {
+  return 'questBoard_' + (user || 'default');
+}
 
 // ===== DEFAULT STATE =====
 function defaultState() {
@@ -826,18 +987,19 @@ function defaultState() {
     streak: 0,
     lastCompletionDate: null,
     theme: 'dark',
-    sections: [],      // { id, name, color, collapsed }
-    assignments: [],   // { id, title, sectionId, type, dueDate, days, priority, notes, completed, completedDate }
+    sections: [],
+    assignments: [],
     editingId: null,
+    seeded: false,
   };
 }
 
 // ===== STATE MANAGEMENT =====
-let appState = loadState();
+let appState = defaultState();
 
 function loadState() {
   try {
-    const raw = localStorage.getItem('questBoardState');
+    const raw = localStorage.getItem(storageKey(currentUser));
     if (raw) {
       const parsed = JSON.parse(raw);
       return { ...defaultState(), ...parsed };
@@ -847,7 +1009,96 @@ function loadState() {
 }
 
 function saveState() {
-  localStorage.setItem('questBoardState', JSON.stringify(appState));
+  localStorage.setItem(storageKey(currentUser), JSON.stringify(appState));
+}
+
+/** Seed preset class sections and starter assignments for a new user */
+function seedPresetData() {
+  if (appState.seeded) return;
+
+  const sectionIds = {};
+  for (const preset of PRESET_SECTIONS) {
+    const id = 'sec_' + preset.name.toLowerCase().replace(/\s+/g, '_');
+    appState.sections.push({
+      id,
+      name: preset.name,
+      color: preset.color,
+      collapsed: false,
+    });
+    sectionIds[preset.name] = id;
+  }
+
+  // Membean: 3 repeating assignments under English, due every Sunday
+  for (let i = 1; i <= 3; i++) {
+    appState.assignments.push({
+      id: 'asgn_membean_' + i,
+      title: 'Membean ' + i,
+      sectionId: sectionIds['English'],
+      type: 'repeating',
+      dueDate: null,
+      days: [0], // Sunday
+      priority: 'med',
+      notes: 'Weekly Membean training session. New set starts each Monday, due Sunday.',
+      completed: false,
+      completedDate: null,
+    });
+  }
+
+  // Spiral: repeating assignment under Math, every Monday
+  appState.assignments.push({
+    id: 'asgn_spiral_1',
+    title: 'Spiral',
+    sectionId: sectionIds['Math'],
+    type: 'repeating',
+    dueDate: null,
+    days: [1], // Monday
+    priority: 'med',
+    notes: 'Weekly Spiral assignment. Assigned each Monday, due the following Monday.',
+    completed: false,
+    completedDate: null,
+  });
+
+  appState.seeded = true;
+  saveState();
+}
+
+// ===== LOGIN FLOW =====
+function showLogin() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function hideLogin() {
+  document.getElementById('loginScreen').classList.add('hidden');
+}
+
+function doLogin(username) {
+  username = username.trim();
+  if (!username) return;
+  currentUser = username;
+  localStorage.setItem('questBoard_currentUser', currentUser);
+  appState = loadState();
+  if (!appState.seeded) seedPresetData();
+  hideLogin();
+  updateUserDisplay();
+  document.documentElement.setAttribute('data-theme', appState.theme);
+  resetRepeatingCompletions();
+  saveState();
+  render();
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('questBoard_currentUser');
+  appState = defaultState();
+  showLogin();
+  document.getElementById('usernameInput').value = '';
+  document.getElementById('usernameInput').focus();
+}
+
+function updateUserDisplay() {
+  if (!currentUser) return;
+  document.getElementById('userName').textContent = currentUser;
+  document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
 }
 
 // ===== DATE HELPERS =====
@@ -871,7 +1122,6 @@ function daysBetween(a, b) {
   return Math.round((new Date(b) - new Date(a)) / 86400000);
 }
 
-/** Get next occurrence of a repeating assignment's days from today */
 function nextOccurrence(days) {
   if (!days || days.length === 0) return null;
   const today = new Date();
@@ -887,35 +1137,39 @@ function nextOccurrence(days) {
   return null;
 }
 
-/** Get effective due date for sorting/filtering */
 function effectiveDue(a) {
   if (a.type === 'repeating') return nextOccurrence(a.days) || todayStr();
   return a.dueDate || '9999-12-31';
 }
 
-/** Check if a repeating assignment is due today */
 function isRepeatingDueToday(a) {
   if (a.type !== 'repeating') return false;
   const today = new Date().getDay();
   return a.days && a.days.includes(today);
 }
 
-/** Check if a repeating assignment was completed today already */
 function isRepeatingCompletedToday(a) {
   return a.type === 'repeating' && a.completedDate === todayStr();
 }
 
-/** Is assignment effectively completed? */
 function isCompleted(a) {
   if (a.type === 'onetime') return a.completed;
   return isRepeatingCompletedToday(a);
 }
 
-/** Is assignment overdue? */
 function isOverdue(a) {
   if (isCompleted(a)) return false;
-  if (a.type === 'repeating') return false; // repeating items recur, not overdue
+  if (a.type === 'repeating') return false;
   return a.dueDate && a.dueDate < todayStr();
+}
+
+function resetRepeatingCompletions() {
+  const today = todayStr();
+  for (const a of appState.assignments) {
+    if (a.type === 'repeating' && a.completedDate && a.completedDate !== today) {
+      a.completedDate = null;
+    }
+  }
 }
 
 // ===== LEVEL HELPERS =====
@@ -947,7 +1201,7 @@ function getXpProgress(coins) {
 // ===== STREAK LOGIC =====
 function updateStreak() {
   const today = todayStr();
-  if (appState.lastCompletionDate === today) return; // already updated today
+  if (appState.lastCompletionDate === today) return;
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   const yStr = yesterday.toISOString().slice(0, 10);
@@ -959,7 +1213,7 @@ function updateStreak() {
   appState.lastCompletionDate = today;
 }
 
-// ===== COIN ANIMATION =====
+// ===== SPLASH/POINT BURST ANIMATION =====
 function spawnCoinBurst(x, y, count) {
   for (let i = 0; i < count; i++) {
     const p = document.createElement('div');
@@ -971,25 +1225,30 @@ function spawnCoinBurst(x, y, count) {
     p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
     p.style.setProperty('--ty', Math.sin(angle) * dist - 30 + 'px');
     p.style.animationDelay = (Math.random() * 0.15) + 's';
+    // Alternate sizes for splash effect
+    const size = 6 + Math.random() * 8;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
     document.body.appendChild(p);
     setTimeout(() => p.remove(), 1000);
   }
 }
 
-// ===== CONFETTI =====
+// ===== CONFETTI (water polo celebration) =====
 function launchConfetti() {
   const container = document.createElement('div');
   container.className = 'confetti-container';
   document.body.appendChild(container);
-  const colors = ['#FFD700','#e74c3c','#3498db','#2ecc71','#9b59b6','#e67e22','#ff6b6b','#f1c40f'];
+  const colors = ['#00b4d8','#e63946','#48cae4','#ff6b6b','#0077b6','#fff','#90e0ef','#b42d38'];
   for (let i = 0; i < 80; i++) {
     const piece = document.createElement('div');
     piece.className = 'confetti-piece';
     piece.style.left = Math.random() * 100 + '%';
     piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.width = (6 + Math.random() * 8) + 'px';
-    piece.style.height = (6 + Math.random() * 8) + 'px';
-    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    const size = 6 + Math.random() * 10;
+    piece.style.width = size + 'px';
+    piece.style.height = size + 'px';
+    piece.style.borderRadius = Math.random() > 0.3 ? '50%' : '2px';
     piece.style.animationDelay = Math.random() * 1.5 + 's';
     piece.style.animationDuration = (2 + Math.random() * 2) + 's';
     container.appendChild(piece);
@@ -1005,13 +1264,12 @@ function showLevelUp() {
   setTimeout(() => flash.remove(), 1100);
 }
 
-// ===== COIN EARNING =====
+// ===== POINT EARNING =====
 function earnCoins(amount, sourceEl) {
   const oldLevel = getLevelIndex(appState.coins);
   appState.coins += amount;
   const newLevel = getLevelIndex(appState.coins);
 
-  // Animation origin
   let x = window.innerWidth / 2, y = window.innerHeight / 2;
   if (sourceEl) {
     const rect = sourceEl.getBoundingClientRect();
@@ -1038,7 +1296,6 @@ function completeAssignment(id, checkboxEl) {
     a.completed = !a.completed;
     a.completedDate = a.completed ? todayStr() : null;
   } else {
-    // Repeating: toggle today's completion
     if (isRepeatingCompletedToday(a)) {
       a.completedDate = null;
     } else {
@@ -1049,20 +1306,12 @@ function completeAssignment(id, checkboxEl) {
   const nowCompleted = isCompleted(a);
 
   if (!wasCompleted && nowCompleted) {
-    // Calculate coins
     let coins = a.type === 'repeating' ? 5 : 10;
-
-    // Early bonus (one-time only, completed before due date)
     if (a.type === 'onetime' && a.dueDate && todayStr() < a.dueDate) {
       coins += 15;
     }
-
     earnCoins(coins, checkboxEl);
-
-    // Check section completion bonus
     checkSectionBonus(a.sectionId);
-
-    // Check if all today's assignments are done
     checkAllTodayDone();
   }
 
@@ -1070,7 +1319,6 @@ function completeAssignment(id, checkboxEl) {
   render();
 }
 
-/** Award bonus if all assignments in a section due today are completed today */
 function checkSectionBonus(sectionId) {
   const today = todayStr();
   const sectionAssignments = appState.assignments.filter(a => a.sectionId === sectionId);
@@ -1083,7 +1331,6 @@ function checkSectionBonus(sectionId) {
   }
 }
 
-/** If all today's assignments are done, fire confetti */
 function checkAllTodayDone() {
   const todayAssignments = getTodayAssignments();
   if (todayAssignments.length > 0 && todayAssignments.every(a => isCompleted(a))) {
@@ -1114,7 +1361,6 @@ function filterAssignments() {
 
   let list = [...appState.assignments];
 
-  // View filter
   switch (currentView) {
     case 'today':
       list = list.filter(a => {
@@ -1129,9 +1375,9 @@ function filterAssignments() {
       list = list.filter(a => {
         if (a.type === 'onetime') {
           if (a.completed) return false;
-          return a.dueDate >= weekStart && a.dueDate <= weekEnd || isOverdue(a);
+          return (a.dueDate >= weekStart && a.dueDate <= weekEnd) || isOverdue(a);
         }
-        return !isRepeatingCompletedToday(a) || true; // show all repeating
+        return true;
       });
       break;
     case 'upcoming':
@@ -1145,7 +1391,6 @@ function filterAssignments() {
       break;
   }
 
-  // Search filter
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     list = list.filter(a => {
@@ -1156,7 +1401,6 @@ function filterAssignments() {
     });
   }
 
-  // Sort
   const priorityOrder = { high: 0, med: 1, low: 2 };
   list.sort((a, b) => {
     switch (currentSort) {
@@ -1172,7 +1416,6 @@ function filterAssignments() {
 
 // ===== RENDERING =====
 
-/** Render header stats */
 function renderHeader() {
   document.getElementById('coinCount').textContent = appState.coins;
   document.getElementById('streakCount').textContent = appState.streak;
@@ -1183,24 +1426,21 @@ function renderHeader() {
   document.getElementById('xpLabel').textContent = 'Lv ' + (lvIdx + 1);
   document.getElementById('xpBar').style.width = (getXpProgress(appState.coins) * 100) + '%';
 
-  // Theme icon
   document.getElementById('themeToggle').innerHTML = appState.theme === 'dark' ? '&#x263E;' : '&#x2600;';
 }
 
-/** Render the main assignment list grouped by sections */
 function renderSections() {
   const container = document.getElementById('sectionsContainer');
   const filtered = filterAssignments();
 
   if (filtered.length === 0) {
     container.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">${currentView === 'completed' ? '\u{1F3C6}' : '\u{1F4DC}'}</div>
-      <p>${currentView === 'completed' ? 'No completed quests yet. Get started!' : 'No quests here. Add one with the + button!'}</p>
+      <div class="empty-icon">${currentView === 'completed' ? '\u{1F3D0}' : '\u{1F4CB}'}</div>
+      <p>${currentView === 'completed' ? 'No completed missions yet. Get in the pool, agent!' : 'No active missions. Hit + to deploy one!'}</p>
     </div>`;
     return;
   }
 
-  // Group by section
   const groups = new Map();
   for (const a of filtered) {
     if (!groups.has(a.sectionId)) groups.set(a.sectionId, []);
@@ -1218,7 +1458,6 @@ function renderSections() {
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     const incomplete = total - done;
 
-    // Check if there are incomplete assignments for "Complete All Today"
     const hasTodayIncomplete = assignments.some(a => !isCompleted(a) && (
       (a.type === 'onetime' && a.dueDate === todayStr()) || isRepeatingDueToday(a)
     ));
@@ -1227,7 +1466,7 @@ function renderSections() {
       <div class="section-header" onclick="toggleSection('${section.id}')">
         <div class="section-color" style="background:${section.color}"></div>
         <div class="section-name">${escHtml(section.name)}</div>
-        ${incomplete > 0 ? `<span class="section-badge">${incomplete} left</span>` : ''}
+        ${incomplete > 0 ? `<span class="section-badge">${incomplete} active</span>` : ''}
         <div class="section-progress">
           <div class="section-progress-bar" style="width:${pct}%"></div>
         </div>
@@ -1245,16 +1484,14 @@ function renderSections() {
   container.innerHTML = html;
 }
 
-/** Render a single assignment card */
 function renderAssignment(a) {
   const completed = isCompleted(a);
   const overdue = isOverdue(a);
-  const section = appState.sections.find(s => s.id === a.sectionId);
 
   let dueBadge = '';
   if (a.type === 'onetime' && a.dueDate) {
     if (overdue) {
-      dueBadge = `<span class="badge badge-overdue">\u{1F480} Overdue</span>`;
+      dueBadge = `<span class="badge badge-overdue">\u{1F6A8} OVERDUE</span>`;
     } else {
       const daysLeft = daysBetween(todayStr(), a.dueDate);
       if (daysLeft === 0) dueBadge = `<span>Due today</span>`;
@@ -1298,7 +1535,6 @@ function renderAssignment(a) {
   </div>`;
 }
 
-/** Master render */
 function render() {
   renderHeader();
   renderSections();
@@ -1326,13 +1562,11 @@ function completeAllSection(sectionId) {
     appState.coins += coins;
   }
   if (targets.length > 0) {
-    // Early bonus for qualifying assignments
     for (const a of targets) {
       if (a.type === 'onetime' && a.dueDate && today < a.dueDate) appState.coins += 15;
     }
     updateStreak();
     spawnCoinBurst(window.innerWidth / 2, window.innerHeight / 2, 15);
-    // Section bonus
     if (targets.length > 1) earnCoins(25, document.getElementById('coinDisplay'));
     checkAllTodayDone();
   }
@@ -1342,7 +1576,7 @@ function completeAllSection(sectionId) {
 
 // ===== DELETE ASSIGNMENT =====
 function deleteAssignment(id) {
-  if (!confirm('Delete this quest?')) return;
+  if (!confirm('Abort this mission?')) return;
   appState.assignments = appState.assignments.filter(a => a.id !== id);
   saveState();
   render();
@@ -1359,7 +1593,6 @@ function editAssignment(id) {
   document.getElementById('inputPriority').value = a.priority;
   document.getElementById('inputNotes').value = a.notes || '';
 
-  // Type
   setAssignmentType(a.type);
   if (a.type === 'onetime') {
     document.getElementById('inputDueDate').value = a.dueDate || '';
@@ -1368,25 +1601,22 @@ function editAssignment(id) {
     renderDaysPicker();
   }
 
-  document.getElementById('modalTitle').textContent = 'Edit Quest';
-  document.getElementById('saveBtn').textContent = 'Update Quest';
+  document.getElementById('modalTitle').textContent = 'Edit Mission';
+  document.getElementById('saveBtn').textContent = 'Update Mission';
 }
 
 // ===== MODAL =====
 let selectedType = 'onetime';
 let selectedDays = [];
-let newSectionColor = COLORS[0];
 
 function openModal() {
   document.getElementById('modalOverlay').classList.add('active');
   populateSectionDropdown();
-  renderNewSectionPalette();
   renderDaysPicker();
 }
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('active');
-  // Reset form
   document.getElementById('inputTitle').value = '';
   document.getElementById('inputDueDate').value = '';
   document.getElementById('inputNotes').value = '';
@@ -1394,8 +1624,8 @@ function closeModal() {
   selectedDays = [];
   setAssignmentType('onetime');
   appState.editingId = null;
-  document.getElementById('modalTitle').textContent = 'New Quest';
-  document.getElementById('saveBtn').textContent = 'Save Quest';
+  document.getElementById('modalTitle').textContent = 'New Mission';
+  document.getElementById('saveBtn').textContent = 'Deploy Mission';
 }
 
 function setAssignmentType(type) {
@@ -1408,25 +1638,10 @@ function setAssignmentType(type) {
 
 function populateSectionDropdown() {
   const sel = document.getElementById('inputSection');
-  sel.innerHTML = appState.sections.map(s =>
-    `<option value="${s.id}">${escHtml(s.name)}</option>`
-  ).join('');
-  if (appState.sections.length === 0) {
-    sel.innerHTML = '<option value="">-- Create a section first --</option>';
-  }
-}
-
-function renderNewSectionPalette() {
-  const container = document.getElementById('newSectionPalette');
-  container.innerHTML = COLORS.map(c =>
-    `<div class="color-swatch ${c === newSectionColor ? 'active' : ''}"
-          style="background:${c}" onclick="pickNewSectionColor('${c}')"></div>`
-  ).join('');
-}
-
-function pickNewSectionColor(c) {
-  newSectionColor = c;
-  renderNewSectionPalette();
+  sel.innerHTML = PRESET_SECTIONS.map(p => {
+    const id = 'sec_' + p.name.toLowerCase().replace(/\s+/g, '_');
+    return `<option value="${id}">${escHtml(p.name)}</option>`;
+  }).join('');
 }
 
 function renderDaysPicker() {
@@ -1444,31 +1659,14 @@ function toggleDay(i) {
   renderDaysPicker();
 }
 
-function addSection() {
-  const name = document.getElementById('inputNewSection').value.trim();
-  if (!name) return;
-  const section = {
-    id: 'sec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-    name,
-    color: newSectionColor,
-    collapsed: false,
-  };
-  appState.sections.push(section);
-  document.getElementById('inputNewSection').value = '';
-  saveState();
-  populateSectionDropdown();
-  // Select the new section
-  document.getElementById('inputSection').value = section.id;
-}
-
 function saveAssignment() {
   const title = document.getElementById('inputTitle').value.trim();
   const sectionId = document.getElementById('inputSection').value;
   const priority = document.getElementById('inputPriority').value;
   const notes = document.getElementById('inputNotes').value.trim();
 
-  if (!title) { alert('Please enter a title.'); return; }
-  if (!sectionId) { alert('Please select or create a class section.'); return; }
+  if (!title) { alert('Mission briefing required, agent.'); return; }
+  if (!sectionId) { alert('Select a department.'); return; }
 
   const data = {
     title, sectionId, priority, notes,
@@ -1481,15 +1679,13 @@ function saveAssignment() {
   } else {
     data.dueDate = null;
     data.days = [...selectedDays];
-    if (data.days.length === 0) { alert('Please select at least one day.'); return; }
+    if (data.days.length === 0) { alert('Select at least one day for the repeat cycle.'); return; }
   }
 
   if (appState.editingId) {
-    // Update existing
     const a = appState.assignments.find(x => x.id === appState.editingId);
     if (a) Object.assign(a, data);
   } else {
-    // Create new
     data.id = 'asgn_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     data.completed = false;
     data.completedDate = null;
@@ -1523,13 +1719,13 @@ function exportData() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'quest-board-export.json';
+  link.download = 'mission-control-export.json';
   link.click();
   URL.revokeObjectURL(url);
 }
 
 function resetCoins() {
-  if (!confirm('Reset coins, level, and streak to zero?')) return;
+  if (!confirm('Reset all points and rank to zero?')) return;
   appState.coins = 0;
   appState.streak = 0;
   appState.lastCompletionDate = null;
@@ -1538,10 +1734,11 @@ function resetCoins() {
 }
 
 function resetAll() {
-  if (!confirm('This will delete ALL data. Are you sure?')) return;
-  if (!confirm('Really? This cannot be undone!')) return;
-  localStorage.removeItem('questBoardState');
+  if (!confirm('This will burn ALL records. Are you sure, agent?')) return;
+  if (!confirm('Final confirmation. This cannot be undone!')) return;
+  localStorage.removeItem(storageKey(currentUser));
   appState = defaultState();
+  seedPresetData();
   saveState();
   render();
   closeSettings();
@@ -1554,27 +1751,31 @@ function escHtml(str) {
   return div.innerHTML;
 }
 
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
 // ===== EVENT LISTENERS =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply saved theme
-  document.documentElement.setAttribute('data-theme', appState.theme);
+  const loginBtn = document.getElementById('loginBtn');
+  const usernameInput = document.getElementById('usernameInput');
 
-  // Reset repeating assignment completions from previous days
-  const today = todayStr();
-  for (const a of appState.assignments) {
-    if (a.type === 'repeating' && a.completedDate && a.completedDate !== today) {
-      a.completedDate = null;
-    }
+  loginBtn.addEventListener('click', () => doLogin(usernameInput.value));
+  usernameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin(usernameInput.value);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', doLogout);
+
+  if (currentUser) {
+    appState = loadState();
+    if (!appState.seeded) seedPresetData();
+    hideLogin();
+    updateUserDisplay();
+    document.documentElement.setAttribute('data-theme', appState.theme);
+    resetRepeatingCompletions();
+    saveState();
+    render();
+  } else {
+    showLogin();
   }
-  saveState();
 
-  render();
-
-  // View tabs
   document.getElementById('viewTabs').addEventListener('click', e => {
     const tab = e.target.closest('.view-tab');
     if (!tab) return;
@@ -1584,41 +1785,30 @@ document.addEventListener('DOMContentLoaded', () => {
     render();
   });
 
-  // Sort
   document.getElementById('sortSelect').addEventListener('change', e => {
     currentSort = e.target.value;
     render();
   });
 
-  // Search
   document.getElementById('searchBox').addEventListener('input', e => {
     searchQuery = e.target.value;
     render();
   });
 
-  // FAB
   document.getElementById('addFab').addEventListener('click', openModal);
 
-  // Modal type toggle
   document.getElementById('typeOneTime').addEventListener('click', () => setAssignmentType('onetime'));
   document.getElementById('typeRepeating').addEventListener('click', () => setAssignmentType('repeating'));
 
-  // Add section inline
-  document.getElementById('addSectionBtn').addEventListener('click', addSection);
-
-  // Save / Cancel
   document.getElementById('saveBtn').addEventListener('click', saveAssignment);
   document.getElementById('cancelBtn').addEventListener('click', closeModal);
 
-  // Close modal on overlay click
   document.getElementById('modalOverlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
   });
 
-  // Theme
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
-  // Settings
   document.getElementById('settingsBtn').addEventListener('click', openSettings);
   document.getElementById('closeSettingsBtn').addEventListener('click', closeSettings);
   document.getElementById('exportBtn').addEventListener('click', exportData);
@@ -1628,7 +1818,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === e.currentTarget) closeSettings();
   });
 
-  // Keyboard: Escape closes modals
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       closeModal();
