@@ -804,11 +804,32 @@ button { cursor: pointer; font-family: 'Nunito', sans-serif; border: none; }
   .header-left { flex-wrap: wrap; }
   .header-stats { flex-direction: column; gap: 8px; }
   .xp-container { min-width: unset; }
-  .toolbar { flex-direction: column; }
-  .view-tabs { overflow-x: auto; }
-  .container { padding: 12px; }
-  .modal { padding: 20px; }
+  .toolbar { flex-direction: column; position: relative; z-index: 10; }
+  .view-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .view-tab { padding: 8px 12px; font-size: 0.78rem; white-space: nowrap; }
+  .container { padding: 10px; }
+  .modal { padding: 18px; }
   .fab { width: 52px; height: 52px; font-size: 1.6rem; bottom: 20px; right: 20px; }
+  .search-wrapper { min-width: unset; width: 100%; }
+  .search-box { width: 100%; font-size: 16px; /* prevents iOS zoom on focus */ }
+  .sort-select { width: 100%; font-size: 16px; }
+  .assignment { padding: 10px 12px; gap: 10px; }
+  .assignment-title { font-size: 0.9rem; }
+  .assignment-meta { font-size: 0.72rem; }
+  .assignment-actions button { width: 32px; height: 32px; font-size: 0.95rem; }
+  .section-header { padding: 12px 14px; gap: 8px; }
+  .section-name { font-size: 0.8rem; }
+  .header-title { font-size: 1rem; letter-spacing: 2px; }
+  .coin-display { padding: 5px 12px; font-size: 1rem; }
+  .coin-icon { width: 24px; height: 24px; font-size: 14px; }
+  .login-box { padding: 28px 24px; }
+  .login-box h1 { font-size: 1.3rem; }
+}
+
+/* iPhone-specific: prevent text zoom, safe area insets */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .fab { bottom: calc(20px + env(safe-area-inset-bottom)); }
+  .container { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
 }
 
 /* ===== UTILITY ===== */
@@ -1058,6 +1079,49 @@ function seedPresetData() {
     completedDate: null,
   });
 
+  // --- Last week's assignments (one-time, past due, completable) ---
+
+  // 2 Membean sessions from last week
+  appState.assignments.push({
+    id: 'asgn_membean_lw1',
+    title: 'Membean - Week of 3/2 (Session 1)',
+    sectionId: sectionIds['English'],
+    type: 'onetime',
+    dueDate: '2026-03-06',
+    days: null,
+    priority: 'med',
+    notes: 'Membean training session from last week. Complete your 15-minute session.',
+    completed: false,
+    completedDate: null,
+  });
+
+  appState.assignments.push({
+    id: 'asgn_membean_lw2',
+    title: 'Membean - Week of 3/2 (Session 2)',
+    sectionId: sectionIds['English'],
+    type: 'onetime',
+    dueDate: '2026-03-06',
+    days: null,
+    priority: 'med',
+    notes: 'Membean training session from last week. Complete your 15-minute session.',
+    completed: false,
+    completedDate: null,
+  });
+
+  // Math Spiral from last week
+  appState.assignments.push({
+    id: 'asgn_spiral_lw',
+    title: 'Spiral - Week of 3/2',
+    sectionId: sectionIds['Math'],
+    type: 'onetime',
+    dueDate: '2026-03-06',
+    days: null,
+    priority: 'med',
+    notes: 'Math Spiral from last week.',
+    completed: false,
+    completedDate: null,
+  });
+
   appState.seeded = true;
   saveState();
 }
@@ -1213,6 +1277,44 @@ function updateStreak() {
   appState.lastCompletionDate = today;
 }
 
+// ===== COIN SOUND (Web Audio API) =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function playCoinSound() {
+  try {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    const now = audioCtx.currentTime;
+
+    // Two-tone gold coin "cha-ching" sound
+    const notes = [1046.5, 1318.5, 1568]; // C6, E6, G6 — bright major chord arpeggio
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.08);
+      gain.gain.setValueAtTime(0.3, now + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.4);
+    });
+
+    // Add a metallic shimmer
+    const shimmer = audioCtx.createOscillator();
+    const shimmerGain = audioCtx.createGain();
+    shimmer.type = 'triangle';
+    shimmer.frequency.setValueAtTime(2637, now + 0.15); // E7
+    shimmerGain.gain.setValueAtTime(0.12, now + 0.15);
+    shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    shimmer.connect(shimmerGain);
+    shimmerGain.connect(audioCtx.destination);
+    shimmer.start(now + 0.15);
+    shimmer.stop(now + 0.6);
+  } catch (e) { /* audio not supported */ }
+}
+
 // ===== SPLASH/POINT BURST ANIMATION =====
 function spawnCoinBurst(x, y, count) {
   for (let i = 0; i < count; i++) {
@@ -1269,6 +1371,9 @@ function earnCoins(amount, sourceEl) {
   const oldLevel = getLevelIndex(appState.coins);
   appState.coins += amount;
   const newLevel = getLevelIndex(appState.coins);
+
+  // Play gold coin sound
+  playCoinSound();
 
   let x = window.innerWidth / 2, y = window.innerHeight / 2;
   if (sourceEl) {
